@@ -1,0 +1,413 @@
+﻿@{
+    ViewData["Title"] = "Chi tiết sản phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+@section Styles {
+    <style>
+        .image-container {
+            position: relative;
+            display: inline-block;
+            margin: 5px;
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+        }
+
+    </style>
+}
+@* @model IEnumerable<Coffee.DATA.Models.Product> *@
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <a href="javascript:void(0)" data-toggle="modal" data-target="#inputModal" class="m-0 font-weight-bold text-primary">Thêm danh mục mới</a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table id="dataTable" class="table table-bordered" style="width:100%; min-width: 1000px;" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Mã sản phẩm </th>
+                        <th>Tên </th>
+                        <th>Hình ảnh</th>
+                        <th>Giá</th>
+                        <th>Giá giảm</th>
+                        <th>#</th>
+                        <th>#</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- Modal Thêm-->
+<div class="modal fade" id="inputModal" tabindex="-1" role="dialog" aria-labelledby="inputModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="inputModalLabel">Nhập liệu sản phẩm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body row">
+                <input type="hidden" id="categoryId" />
+                <div class="form-group col-lg-6">
+                    <label for="txtModalName">Tên sản phẩm *</label>
+                    <input type="text" class="form-control" id="txtModalName" placeholder="Tên sản phẩm" />
+                </div>
+                <div class="form-group col-lg-6">
+                    <label for="txtModalPrice">Đơn giá *</label>
+                    <input type="number" class="form-control" id="txtModalPrice" placeholder="Đơn giá" />
+                </div>
+                <div class="form-group col-lg-6">
+                    <label for="txtModalDiscountPrice">Giảm giá nếu có</label>
+                    <input type="number" class="form-control" id="txtModalDiscountPrice" placeholder="Giá sau giảm" />
+                </div>
+                <div class="form-group col-lg-12">
+                    <label for="txtModalDescription">Mô tả *</label>
+                    <div id="editor" class="ml-10 form form-control"></div>
+                </div>
+                <div class="form-group col-lg-12">
+                    <label for="txtModalDescriptionShort">Mô tả ngắn *</label>
+                    <input type="text" class="form-control" id="txtModalDescriptionShort" placeholder="Đơn giá" />
+                </div>
+                <div class="form-group col-lg-12">
+                    <label for="txtModalKeywords">Từ khoá *</label>
+                    <input type="text" class="form-control" id="txtModalKeywords" placeholder="Từ khoá" />
+                </div>
+                <div class="form-group col-lg-6">
+                    <label for="txtModalCategory">Danh mục</label>
+                    <select class="form-control" id="txtModalCategory">
+                        @foreach (var category in ViewBag.Category)
+                        {
+                            <option value="@category.Id">@category.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group col-lg-6">
+                    <label for="txtModalQuantity">Số lượng *</label>
+                    <input type="number" class="form-control" id="txtModalQuantity" placeholder="Số lượng" />
+                </div>
+                <div class="form-group col-lg-6">
+                    <label for="mainImage">Hình ảnh chính *</label>
+                    <div class="d-flex align-items-center">
+                        <input type="file" name="mainImage" id="mainImage" accept="image/*" class="form-control-file" onchange="previewMainImage(event)">
+                        <button type="button" id="deleteMainImage" class="btn btn-sm ml-2" style="display: none;"><i class="fas fa-times"></i></button>
+                    </div>
+                    <img id="mainImagePreview" src="#" alt="Main Image Preview" style="max-width: 100px; display: none;">
+                </div>
+                <div class="form-group col-lg-12">
+                    <label for="additionalImages">Hình ảnh phụ (Tối đa 4 hình) *</label><br>
+                    <input type="file" name="additionalImages" id="additionalImages" accept="image/*" class="form-control-file" multiple>
+                    <div id="preview"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                <button type="button" id="btnSaveProduct" class="btn btn-primary">Lưu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+
+    <script src="https://cdn.jsdelivr.net/npm/ckeditor5-classic-free-full-feature@35.4.1/build/ckeditor.min.js"></script>
+    <script>
+        let editor;
+        ClassicEditor
+            .create(document.querySelector('#editor'), {
+                plugins: ['Essentials',
+                    'Paragraph',
+                    'Heading',
+                    'Bold',
+                    'Italic',
+                    'Underline',
+                    'Strikethrough',
+                    'SourceEditing',
+                    'Subscript',
+                    'Superscript',
+                    'Alignment',
+                    'Indent',
+                    'IndentBlock',
+                    'BlockQuote',
+                    'Link',
+                    'Image',
+                    'ImageCaption',
+                    'ImageStyle',
+                    'ImageToolbar',
+                    'ImageUpload',
+                    'List',
+                    'MediaEmbed',
+                    'PasteFromOffice',
+                    'Table',
+                    'TableToolbar',
+                    'TableProperties',
+                    'TableCellProperties',
+                    'Highlight',
+                    'FontFamily',
+                    'FontSize',
+                    'FontColor',
+                    'FontBackgroundColor', 'GeneralHtmlSupport', /* ... */]
+            })
+            .then(newEditor => {
+                editor = newEditor;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+        $('#dataTable').DataTable({
+            "ajax": {
+                "url": "/Admin/Product/GetAllProduct",
+                "type": "GET",
+                "dataSrc": "result."
+            },
+            "columns": [
+                { "data": "id" },
+                { "data": "name", "width": "40%" },
+                {
+                    "data": "image",
+                    "render": function (data, type, row) {
+                        return '<img src="' + data + '" alt="Product Image" width="100">';
+                    }
+                },
+                { "data": "price" },
+                { "data": "discountPrice" },
+                {
+                    "data": null,
+                    "render": function (data, type, row) {
+                        return '<a href="/Admin/ProductDetail?id=' + data.id + '" target="_blank" class="m-0 font-weight-bold text-primary">Sửa</a>';
+                    }
+                },
+                {
+                    "data": null,
+                    "render": function (data, type, row) {
+                        if (row.status) {
+                            return '<a href="javascript:void(0)" class="delete-product m-0 font-weight-bold text-primary" data-id="' + data.id + '">Khoá</a>';
+                        } else {
+                            return '<a href="javascript:void(0)" class="delete-product m-0 font-weight-bold text-primary" data-id="' + data.id + '">Mở khoá</a>';
+                        }
+                    }
+                }
+            ],
+            "order": [
+                [0, 'desc'] // Sắp xếp cột đầu tiên (cột ID) theo thứ tự giảm dần
+            ],
+            "lengthMenu": [5, 10, 25, 50],
+            "language": {
+                processing: "Message khi đang tải dữ liệu",
+                search: "Tìm kiếm",
+                lengthMenu: "Điều chỉnh số mục trên 1 trang _MENU_ ",
+                info: "Hiển thị _START_ đến _END_ trong  _TOTAL_ mục",
+                infoEmpty: "Không có dữ liệu, Hiển thị 0 bản ghi trong _MAX_ tổng cộng 0 ",
+                infoFiltered: "(Không có sản phẩm trong _MAX_ bản ghi)",
+                loadingRecords: "",
+                zeroRecords: "Không có dữ liệu theo tìm kiếm",
+                emptyTable: "Không có dữ liệu",
+                paginate: {
+                    first: "<<",
+                    previous: "<",
+                    next: ">",
+                    last: ">>"
+                },
+                aria: {
+                    sortAscending: ": Message khi đang sắp xếp theo column",
+                    sortDescending: ": Message khi đang sắp xếp theo column",
+                }
+            },
+            "processing": true,
+            "serverSide": false,
+        });
+    </script>
+    <script>
+        function previewMainImage(event) {
+            var input = event.target;
+            var preview = document.getElementById('mainImagePreview');
+            var deleteButton = document.getElementById('deleteMainImage');
+
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    deleteButton.style.display = 'inline'; // Hiển thị nút xoá hình ảnh
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        // Xóa hình ảnh chính khi người dùng nhấp vào nút xoá
+        document.getElementById('deleteMainImage').addEventListener('click', function () {
+            var input = document.getElementById('mainImage');
+            var preview = document.getElementById('mainImagePreview');
+            var deleteButton = document.getElementById('deleteMainImage');
+
+            input.value = ''; // Xóa giá trị của input file
+            preview.src = ''; // Xóa hình ảnh được xem trước
+            preview.style.display = 'none'; // Ẩn hình ảnh được xem trước
+            deleteButton.style.display = 'none'; // Ẩn nút xoá hình ảnh
+        });
+        $(document).ready(function () {
+            $('#additionalImages').change(function () {
+                $('#preview').html(''); // Xóa bất kỳ hình ảnh trước đó được xem trước
+
+                var files = $(this)[0].files;
+                if (files.length > 4) {
+                    // Nếu người dùng chọn nhiều hơn 4 hình ảnh, hủy bỏ việc chọn
+                    $(this).val('');
+                    alert('Chỉ được phép chọn tối đa 4 hình ảnh.');
+                    return;
+                }
+
+                for (var i = 0; i < files.length; i++) {
+                    var file = files[i];
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        var imageHtml = '<div class="image-container d-inline-block m-1">' +
+                            '<img src="' + e.target.result + '" class="img-thumbnail" width="100">' +
+                            '<button type="button" class="btn btn-sm delete-btn"><i class="fas fa-times"></button>' +
+                            '</div>';
+                        $('#preview').append(imageHtml);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Xóa hình ảnh khi người dùng nhấp vào nút xoá
+            $('#preview').on('click', '.delete-btn', function () {
+                $(this).parent('.image-container').remove();
+            });
+        });
+
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#btnSaveProduct').click(function () {
+                // Lấy dữ liệu sản phẩm từ các trường input
+                var productName = $('#txtModalName').val();
+                var productQuantity = $('#txtModalQuantity').val();
+                var productPrice = $('#txtModalPrice').val();
+                var productDiscountPrice = $('#txtModalDiscountPrice').val();
+                var productDescription = editor.getData();
+                var productDescriptionShort = $('#txtModalDescriptionShort').val();
+                var productKeywords = $('#txtModalKeywords').val();
+                var productCategory = $('#txtModalCategory').val();
+                var mainImage = $('#mainImage')[0].files[0]; // Lấy hình ảnh chính
+                var additionalImages = $('#additionalImages')[0].files; // Lấy hình ảnh phụ
+                console.log("ProductName:", productName);
+                console.log("ProductQuantity:", productQuantity);
+                console.log("ProductPrice:", productPrice);
+                console.log("ProductDiscountPrice:", productDiscountPrice);
+                console.log("ProductDescription:", productDescription);
+                console.log("ProductDescriptionShort:", productDescriptionShort);
+                console.log("ProductKeywords:", productKeywords);
+                console.log("ProductCategory:", productCategory);
+                console.log("MainImage:", mainImage);
+                console.log("AdditionalImages:", additionalImages);
+                showLoading();
+
+                // Kiểm tra xem tất cả các trường có giá trị không
+                if (productName && productPrice && productDescription && productKeywords && productCategory && mainImage && additionalImages.length > 0) {
+                    // Tạo FormData object để chứa dữ liệu sản phẩm và hình ảnh
+                    var formData = new FormData();
+                    formData.append('Name', productName);
+                    formData.append('Price', productPrice);
+                    formData.append('Description', productDescription);
+                    formData.append('Quantity', productQuantity);
+                    formData.append('Keywords', productKeywords);
+                    formData.append('CategoryId', productCategory);
+                    formData.append('DiscountPrice', productDiscountPrice);
+                    formData.append('DescriptionShort', productDescriptionShort);
+                    formData.append('MainImage', mainImage); // Thêm hình ảnh chính vào FormData
+
+                    // Thêm các hình ảnh phụ vào FormData
+                    for (var i = 0; i < additionalImages.length; i++) {
+                        formData.append('AdditionalImages', additionalImages[i]);
+                    }
+                    if (parseInt(productDiscountPrice) >= (parseInt(productPrice))) {
+                        showAlertModal('danger', "Giá giảm phải nhỏ hơn giá giảm phẩm!");
+                    }
+                    console.log(formData);
+                    // Thực hiện AJAX request để gửi dữ liệu đến server
+                    $.ajax({
+                        url: '@Url.Action("CreateProduct", "Product")',
+                        type: 'POST',
+                        processData: false, // Không xử lý dữ liệu
+                        contentType: false, // Không thiết lập loại nội dung
+                        data: formData,
+                        success: function (response) {
+                            $('#dataTable').DataTable().ajax.reload();
+                            $('#inputModal').modal('hide');
+                            showAlertModal('success', response.message);
+                        },
+                        error: function (xhr, status, error) {
+                            // Xử lý lỗi
+                            console.error(xhr.responseText);
+                        }
+                    });
+
+                } else {
+                    showAlertModal('danger', "Vui lòng nhập đủ các trường và chọn hình ảnh");
+                }
+            });
+        });
+    </script>
+    <script>
+        $(document).on('click', '.delete-product', function () {
+            var productId = $(this).data('id');
+            del(productId); // Gọi hàm del để xóa danh mục
+        });
+
+        function del(productId) {
+            if (confirm("Bạn có chắc chắn muốn khoá hoặc mở sản phẩm này không?")) {
+                showLoading();
+                $.ajax({
+                    url: '/Admin/Product/Delete',
+                    type: 'Delete',
+                    data: { Id: productId },
+                    success: function (response) {
+                        if (response.success) {
+                            $('#dataTable').DataTable().ajax.reload();
+                            showAlertModal('success', response.message);
+                        } else {
+                            showAlertModal('danger', response.message);
+                        }
+                    },
+                    error: function () {
+                        showAlertModal('danger', 'Có lỗi xảy ra khi gửi yêu cầu!');
+                    }
+                });
+            }
+        }
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('input[type="number"]').on('input', function () {
+                // Lấy giá trị của trường nhập liệu
+                var value = parseFloat($(this).val());
+
+                // Kiểm tra nếu giá trị nhập vào là số âm
+                if (value < 0) {
+                    // Nếu là số âm, thiết lập giá trị của trường là 0
+                    $(this).val(0);
+                }
+            });
+            $('input[type="number"]').on("keydown", function (e) {
+                // Lấy mã phím
+                var key = e.key;
+                // Kiểm tra nếu phím là dấu trừ
+                if (key === "-") {
+                    // Chặn sự kiện mặc định của phím
+                    e.preventDefault();
+                }
+                if (key === "e") {
+                    // Chặn sự kiện mặc định của phím
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
+}

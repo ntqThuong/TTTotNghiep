@@ -1,0 +1,111 @@
+﻿<aside class="cart-bar-wrapper">
+    <div class="cart-bar__close">
+        <a class="d-flex align-items-center justify-content-center" href="javascript:void(0);"><i class="fal fa-times"></i></a>
+    </div>
+    <div class="cart-bar">
+        <h4 class="cart-bar__title">Cart Items - <span>4</span></h4>
+        <div class="cart-bar__lists">
+            @* <div class="cart-bar__item position-relative d-flex">
+                <div class="thumb">
+                    <img src="assets/images/top-grade/tg-1.png" alt="image_not_found">
+                </div>
+                <div class="content">
+                    <h4 class="title">
+                        <a href="product-details.html">Rorem ipsum dolor sit amet.</a>
+                    </h4>
+                    <span class="Giá">$19.00</span>
+                    <a href="#0" class="remove"><i class="fal fa-times"></i></a>
+                </div>
+            </div>
+            <div class="cart-bar__item position-relative d-flex">
+                <div class="thumb">
+                    <img src="assets/images/top-grade/tg-2.png" alt="image_not_found">
+                </div>
+                <div class="content">
+                    <h4 class="title">
+                        <a href="product-details.html">Rorem ipsum dolor sit amet.</a>
+                    </h4>
+                    <span class="Giá">$36.00</span>
+                    <a href="#0" class="remove"><i class="fal fa-times"></i></a>
+                </div>
+            </div>
+            <div class="cart-bar__item position-relative d-flex">
+                <div class="thumb">
+                    <img src="assets/images/top-grade/tg-3.png" alt="image_not_found">
+                </div>
+                <div class="content">
+                    <h4 class="title">
+                        <a href="product-details.html">Rorem ipsum dolor sit amet.</a>
+                    </h4>
+                    <span class="Giá">$20.00</span>
+                    <a href="#0" class="remove"><i class="fal fa-times"></i></a>
+                </div>
+            </div>
+            <div class="cart-bar__item position-relative d-flex">
+                <div class="thumb">
+                    <img src="assets/images/top-grade/tg-4.png" alt="image_not_found">
+                </div>
+                <div class="content">
+                    <h4 class="title">
+                        <a href="product-details.html">Rorem ipsum dolor sit amet.</a>
+                    </h4>
+                    <span class="Giá">$20.00</span>
+                    <a href="#0" class="remove"><i class="fal fa-times"></i></a>
+                </div>
+            </div> *@
+        </div>
+        <div class="cart-bar__subtotal d-flex align-items-center justify-content-between">
+            <span>Sub Total:</span>
+            <span>$87.00</span>
+        </div>
+        <div class="btns d-flex align-items-center justify-content-center">
+            <a href="cart.html" class="site-btn">View Cart</a>
+            <a href="checkout.html" class="site-btn site-btn__borderd">Checkout</a>
+        </div>
+    </div>
+</aside>
+@section Scripts {
+    <script>
+        function updateCartContent() {
+            $.ajax({
+                url: '/Cart/GetCart',
+                type: 'GET',
+                success: function (data) {
+                    var cartItemsHtml = '';
+                    var totalPrice = data.totalPrice.toFixed(2); // Làm tròn đến 2 chữ số sau dấu thập phân
+
+                    if (data.cartModels && data.cartModels.length > 0) {
+                        data.cartModels.forEach(function (item) {
+                        // cartItemsHtml += '<div class="cart-bar__item position-relative d-flex">' +
+                        //     '<div class="thumb">' +
+                        //     '<img src="' + cartItem.productModel.image + '" alt="image_not_found">' +
+                        //     '</div>' +
+                        //     '<div class="content">' +
+                        //     '<h4 class="title">' +
+                        //     '<a href="' + cartItem.productModel.url + '">' + cartItem.productModel.name + '</a>' +
+                        //     '</h4>' +
+                        //     '<span class="Giá">$' + cartItem.productModel.price.toFixed(2) + '</span>' +
+                        //     '<a href="#0" class="remove"><i class="fal fa-times"></i></a>' +
+                        //     '</div>' +
+                        //     '</div>';
+                    });
+
+                    // Thêm các phần tử sản phẩm vào div có class "cart-bar__lists"
+                    $('.cart-bar__lists').html(cartItemsHtml);
+
+                    // Cập nhật tổng cộng
+                    $('.cart-bar__subtotal span:last-child').text('$' + totalPrice);
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        }
+
+        // Gọi hàm để cập nhật nội dung giỏ hàng khi trang được tải
+        $(document).ready(function () {
+            updateCartContent();
+        });
+
+    </script>
+}

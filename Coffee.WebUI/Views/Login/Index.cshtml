@@ -1,0 +1,47 @@
+﻿@model LoginModel
+@{
+    ViewData["Title"] = "Đăng nhập";
+    // Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@* Add file css *@
+@section Styles {
+    <link rel="stylesheet" href="~/assets/css/css_Login.css" />
+}
+<form asp-controller="Login" asp-action="Index" method="post">
+    <div class="m-auto">
+        <div class="login-form">
+            @if (ViewData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger">@ViewData["ErrorMessage"]</div>
+            }
+            <h2 class="text-center mb-4">Đăng nhập</h2>
+            <div class="mb-3">
+                <label asp-for="Username" class="form-label">Tên đăng nhập</label>
+                <input asp-for="Username" class="form-control" />
+                <span asp-validation-for="Username" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label">Mật khẩu</label>
+                <input asp-for="Password" type="password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+                <div class="d-flex justify-content-between">
+                    <a href="/Account" style="text-decoration:none; color:black">Quên mật khẩu</a>
+                    <a href="/register" style="text-decoration:none; color:black">Đăng kí</a>
+                </div>
+            </div>
+            <center>
+                <button type="submit" class="site-btn">Đăng nhập</button>
+                <br />
+                <span>Hoặc</span>
+            </center>
+            <div class="d-flex justify-content-between">
+                <a asp-controller="Login" asp-action="GoogleLogin" class="google-btn" style="width: 125px"><i class="fab fa-google"></i> Google</a>
+                <button type="button" class="facebook-btn"><i class="fab fa-facebook-f"></i> Facebook</button>
+            </div>
+        </div>
+    </div>
+    <br />
+</form>
+
+
+

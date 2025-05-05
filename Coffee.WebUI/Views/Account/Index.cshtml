@@ -1,0 +1,52 @@
+﻿@{
+    ViewData["Title"] = "Xác thực email";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Styles {
+    <link rel="stylesheet" href="~/assets/css/css_Login.css" />
+}
+<div class="m-auto">
+    <div class="login-form">
+        <h2 class="text-center mb-4">Xác thực </h2>
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input class="form-control" name="email" placeholder="Nhập email" />
+        </div>
+        <center id="next">
+            <a href="javascript:void(0)" id="btnAccuracy" class="site-btn">Gữi</a>
+        </center>
+    </div>
+</div>
+<br />
+@section Scripts {
+    <script>
+        $('#btnAccuracy').click(function () {
+            var email = $("input[name='email']").val();
+            if (isValidEmail(email)) {
+                $("#btnAccuracy").hide();
+                $.ajax({
+                    type: "POST",
+                    url: "/Account",
+                    data: { email: email },
+                    success: function (response) {
+                        if (response.success) {
+                            // $("input[name='email']").prop('disabled', true);
+                            showAlertModal('success', response.message);
+                        } else {
+                            showAlertModal('danger', response.message);
+                            $("#btnAccuracy").show();
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        // Xử lý lỗi (nếu có)
+                        console.error("Error:", error);
+                    }
+                });
+                
+            } 
+            else {
+                showAlertModal('danger', 'Email không đúng định dạng!');
+            }
+        });
+    </script>
+}

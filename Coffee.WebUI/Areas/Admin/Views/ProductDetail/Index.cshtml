@@ -1,0 +1,435 @@
+﻿@{
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+@section Styles {
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/summernote-bs4.min.css" rel="stylesheet">
+    <style>
+        label {
+            margin-top: 15px;
+        }
+
+        .table {
+            width: max-content;
+        }
+
+            .table td {
+                vertical-align: middle;
+            }
+
+            .table img {
+                max-width: 100px; /* Adjust the maximum width of the image */
+                display: block;
+                margin: 0 auto;
+            }
+
+        .product-label {
+            display: inline-flex;
+            height: 36px;
+            justify-content: center;
+            align-items: center;
+            background-repeat: no-repeat;
+            background-size: contain;
+            background-position: center;
+            padding-bottom: 7px;
+            font-size: 14px;
+            color: #fff;
+            font-weight: 500;
+        }
+
+            .product-label.sale {
+                position: absolute;
+                top: 15%;
+                left: -2rem;
+                background-image: url('../../assets/images/sale.svg');
+                width: 9.3rem;
+            }
+    </style>
+}
+<div class="card shadow mb-4" id="productDetailContainer">
+    <div class="card-header py-3">
+        <p class="m-0 font-weight-bold text-primary">Cập nhật nội dung</p>
+    </div>
+    <div class="card-body p-4">
+        <div class="row">
+            <div class="col-lg-4 col-sm-6 col-12">
+                <label>Tên sản phẩm</label>
+                <input type="text" class="ml-10 form form-control" id="productName" />
+            </div>
+            <div class="col-lg-4 col-sm-6 col-12">
+                <label>Đơn giá</label>
+                <input type="number" class="ml-10 form form-control" id="productPrice" />
+            </div>
+            <div class="col-lg-4 col-sm-6 col-12">
+                <label>Giá đã giảm</label>
+                <input type="number" class="ml-10 form form-control" id="productDiscountPrice" />
+            </div>
+            <div class="col-lg-4 col-sm-6 col-12">
+                <label>Số lượng</label>
+                <input type="number" class="ml-10 form form-control" id="productQuantity" />
+            </div>
+            <div class="col-lg-4 col-sm-6 col-12">
+                <label>Danh mục</label>
+                <select name="name" class="form-control" id="productCategory">
+                    @foreach (var category in ViewBag.Category)
+                    {
+                        <option value="@category.Id">@category.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="col-sm-12 col-12">
+                <label for="keywords">Từ khoá</label>
+                <input type="text" class="ml-10 form form-control" id="productKeywords" />
+            </div>
+            <div class="col-sm-12 col-12">
+                <label for="keywords">Mô tả ngắn</label>
+                <input type="text" class="ml-10 form form-control" id="productDescriptionShort" />
+            </div>
+            <div class="col-sm-12 col-12">
+                <label for="description">Mô tả</label>
+                <div id="editor" class="ml-10 form form-control"></div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-end" style="margin-top: 10px">
+            <button type="button" id="UpdateProduct" class="btn btn-primary">Lưu</button>
+        </div>
+    </div>
+</div>
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <p class="m-0 font-weight-bold text-primary">Cập nhật hình ảnh</p>
+    </div>
+    <div class="card-body p-4">
+        <div class="row">
+            <div class="col-12">
+                <label for="description">Hình ảnh chính</label>
+                <br />
+                <div class="d-flex align-items-center">
+                    <input type="file" id="mainImageUpload" accept="image/*" style="display: none;" />
+                    <img id="mainImagePreview" src="" alt="Main Image" style="max-width: 100px;" />
+                    <input type="text" id="ImgMainID" name="name" value="" class="d-none" />
+                    <label for="mainImageUpload" class="btn btn-sm btn-primary" style="margin: 0px 20px">Cập nhật</label>
+                </div>
+            </div>
+            <div class="col-12">
+                <label for="description">Hình ảnh phụ (Tối đa 4 hình)</label>
+                <div>
+                    <input type="file" id="additionalImagesUpload" accept="image/*" multiple style="display: none;" />
+                </div>
+                <div id="additionalImagesPreview" class="row"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Your existing script code here -->
+    <script src="https://cdn.jsdelivr.net/npm/ckeditor5-classic-free-full-feature@35.4.1/build/ckeditor.min.js"></script>
+    <script>
+        let editor;
+        ClassicEditor
+            .create(document.querySelector('#editor'), {
+                plugins: ['Essentials',
+                    'Paragraph',
+                    'Heading',
+                    'Bold',
+                    'Italic',
+                    'Underline',
+                    'Strikethrough',
+                    'SourceEditing',
+                    'Subscript',
+                    'Superscript',
+                    'Alignment',
+                    'Indent',
+                    'IndentBlock',
+                    'BlockQuote',
+                    'Link',
+                    'Image',
+                    'ImageCaption',
+                    'ImageStyle',
+                    'ImageToolbar',
+                    'ImageUpload',
+                    'List',
+                    'MediaEmbed',
+                    'PasteFromOffice',
+                    'Table',
+                    'TableToolbar',
+                    'TableProperties',
+                    'TableCellProperties',
+                    'Highlight',
+                    'FontFamily',
+                    'FontSize',
+                    'FontColor',
+                    'FontBackgroundColor', 'GeneralHtmlSupport', /* ... */]
+            })
+            .then(newEditor => {
+                editor = newEditor;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+        $(document).ready(function () {
+            showLoading();
+            loaddata();
+            hideLoading();
+        });
+        function loaddata() {
+            var url_string = window.location.href;
+            var url = new URL(url_string);
+            var _id = url.searchParams.get("id");
+            $.ajax({
+                url: "/Admin/ProductDetail/GetProductDetail?id=" + _id,
+                type: "GET",
+                dataType: "json",
+                success: function (response) {
+                    if (response.success) {
+                        var product = response.product;
+
+                        // Fill in product details
+                        $("#productName").val(product.name);
+                        $("#productPrice").val(product.price);
+                        $("#productDiscountPrice").val(product.discountPrice);
+                        $("#productDescriptionShort").val(product.descriptionShort);
+                        $("#productKeywords").val(product.keywords);
+                        $("#productQuantity").val(product.quantity);
+
+                        editor.setData(product.description);
+
+                        // Load main image
+                        $("#mainImagePreview").attr("src", product.image); // Updated this line
+                        $("#ImgMainID").val(product.id)
+                        // Load additional images
+                        var additionalImages = response.productImg;
+                        if (additionalImages) {
+                            var item = 0;
+                            additionalImages.forEach(function (index) {
+                                var $image = $('<img id="imgAuxiliary' + item + '" src="' + index.image + '" class="additional-image col" style="max-width: 100px;">');
+                                var $button = $('<button class="update-button btn btn-sm btn-primary ml-2" onclick="UploadImgAuxiliary(' + index.id + ',' + item++ + ')">Cập nhật</button>');
+
+                                // Tạo một div để bọc cả hình ảnh và nút cập nhật
+                                var $container = $('<div class="col-lg-6 col-xl-3 d-flex align-items-center" style="margin-bottom: 10px"></div>');
+
+                                // Thêm hình ảnh và nút cập nhật vào div bọc
+                                $container.append($image).append($button);
+
+                                // Thêm div bọc vào phần tử #additionalImagesPreview
+                                $("#additionalImagesPreview").append($container);
+                            });
+                        }
+
+                        $("#productCategory").val(product.categoryId);
+                    } else {
+                        console.log("Failed to retrieve product details.");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error occurred while retrieving product details:", error);
+                }
+            });
+        }
+    </script>
+    <script>
+        $('#mainImageUpload').change(function () {
+            var file = this.files[0];
+            var _IdImg = $("#ImgMainID").val();
+            if (file) {
+                var formData = new FormData();
+                formData.append('mainImage', file);
+                formData.append('id', _IdImg);
+                showLoading();
+                $.ajax({
+                    url: '/Admin/ProductDetail/UpdateImgMain',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        if (response.success) {
+                            document.getElementById('mainImagePreview').src = response.imageUrl;
+                            showAlertModal('success', response.message);
+                        } else {
+                            showAlertModal('danger', response.message);
+                        }
+                    },
+                    error: function () {
+                        showAlertModal('danger', 'Có lỗi xảy ra khi gửi yêu cầu!');
+                    }
+                });
+            }
+        });
+        function UploadImgAuxiliary(idImg, stt) {
+            document.getElementById('additionalImagesUpload').click();
+            $('#additionalImagesUpload').change(function () {
+                var file = this.files[0];
+                if (file) {
+                    var formData = new FormData();
+                    formData.append('mainImage', file);
+                    formData.append('id', idImg);
+                    var imgId = 'imgAuxiliary' + stt;
+                    // console.log(formData)
+                    showLoading();
+                    $.ajax({
+                        url: '/Admin/ProductDetail/UpdateImgAuxiliary',
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (response) {
+                            if (response.success) {
+                                showAlertModal('success', response.message);
+                                document.getElementById(imgId).src = response.imageUrl;
+                                showAlertModal('success', response.message);
+                            } else {
+                                showAlertModal('danger', response.message);
+                            }
+                        },
+                        error: function () {
+                            showAlertModal('danger', 'Có lỗi xảy ra khi gửi yêu cầu!');
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+    <script>
+        $(document).ready(function () {
+            // Gán sự kiện cho nút "Lưu"
+            $('#UpdateProduct').on('click', function () {
+                // Lấy dữ liệu từ các trường nhập liệu
+                var productName = $('#productName').val();
+                var productPrice = $('#productPrice').val();
+                var productCategory = $('#productCategory').val();
+                var productKeywords = $('#productKeywords').val();
+                var productQuantity = $('#productQuantity').val();
+                var productDescriptionShort = $('#productDescriptionShort').val();
+                var productDiscountPrice = $('#productDiscountPrice').val();
+                var productDescription = editor.getData();
+
+                if (!productName) {
+                    showAlertModal('danger', 'Vui lòng nhập tên sản phẩm.');
+                    return;
+                }
+                if (!productQuantity) {
+                    showAlertModal('danger', 'Vui lòng nhập số lượng sản phẩm.');
+                    return;
+                }
+                if (!productDescriptionShort) {
+                    showAlertModal('danger', 'Vui lòng nhập mô tả ngắn sản phẩm.');
+                    return;
+                }
+                if (!productPrice) {
+                    showAlertModal('danger', 'Vui lòng nhập giá sản phẩm.');
+                    return;
+                }
+                if (!productKeywords) {
+                    showAlertModal('danger', 'Vui lòng nhập từ khoá sản phẩm.');
+                    return;
+                }
+                if (!productDescription) {
+                    showAlertModal('danger', 'Vui lòng nhập mô tả sản phẩm.');
+                    return;
+                }
+                if (parseInt(productDiscountPrice) > parseInt(productPrice)) {
+                    showAlertModal('danger', 'Giá giảm không được lơn hơn giá sản phẩm.');
+                    return;
+                }
+                if (parseInt(productDiscountPrice) < 0) {
+                    showAlertModal('danger', 'Giá giảm không được âm.');
+                    return;
+                }
+                if (parseInt(productPrice) < 0) {
+                    showAlertModal('danger', 'Giá sản phẩm không được âm.');
+                    return;
+                }
+                return;
+                var url_string = window.location.href;
+                var url = new URL(url_string);
+                var _id = url.searchParams.get("id");
+                //Gọi AJAX
+                showLoading();
+                $.ajax({
+                    url: '/Admin/ProductDetail/UpdateProduct',
+                    type: 'POST',
+                    data: {
+                        Id: _id,
+                        Name: productName,
+                        Price: productPrice,
+                        CategoryID: productCategory,
+                        Keywords: productKeywords,
+                        Description: productDescription,
+                        Quantity: productQuantity,
+                        DescriptionShort: productDescriptionShort,
+                        DiscountPrice: productDiscountPrice
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            showAlertModal('success', response.message);
+                            loaddata();
+                            hideLoading();
+                        } else {
+                            showAlertModal('danger', response.message);
+                            hideLoading();
+                        }
+                    },
+                    error: function () {
+                        showAlertModal('danger', 'Đã xảy ra lỗi trong quá trình cập nhật sản phẩm.');
+                        hideLoading();
+                    }
+                });
+            });
+        });
+    </script>
+    <script>
+        // $(document).ready(function () {
+        //     $('input[type="number"]').on('input', function () {
+        //         // Lấy giá trị của trường nhập liệu
+        //         var value = parseFloat($(this).val());
+
+        //         // Kiểm tra nếu giá trị nhập vào là số âm
+        //         if (value < 0) {
+        //             // Nếu là số âm, thiết lập giá trị của trường là 0
+        //             $(this).val(0);
+        //         }
+        //     });
+        // });
+        $('input[type="number"]').change('input', function () {
+            // Lấy giá trị của trường nhập liệu
+            var value = parseFloat($(this).val());
+
+            // Kiểm tra nếu giá trị nhập vào là số âm
+            if (value < 0) {
+                // Nếu là số âm, thiết lập giá trị của trường là 0
+                e.preventDefault();
+            }
+        });
+        $('input[type="number"]').on("keydown", function (e) {
+            // Lấy mã phím
+            var key = e.key;
+            // Kiểm tra nếu phím là dấu trừ
+            if (key === "-") {
+                // Chặn sự kiện mặc định của phím
+                e.preventDefault();
+            }
+            if (key === "e") {
+                // Chặn sự kiện mặc định của phím
+                e.preventDefault();
+            }
+        });
+        $(document).ready(function () {
+            $('input[type="number"]').on('input', function (event) {
+                // Lấy giá trị của trường nhập liệu
+                var value = $(this).val();
+
+                // Loại bỏ các ký tự không phải số và không phải dấu trừ
+                var sanitizedValue = value.replace(/[^0-9-]/g, '');
+
+                // Kiểm tra xem giá trị đã bị thay đổi hay không
+                if (value !== sanitizedValue) {
+                    // Nếu giá trị bị thay đổi, cập nhật giá trị của trường
+                    $(this).val(sanitizedValue);
+                }
+            });
+        });
+
+    </script>
+}

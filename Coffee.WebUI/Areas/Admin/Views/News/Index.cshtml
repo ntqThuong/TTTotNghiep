@@ -1,0 +1,544 @@
+﻿@{
+    ViewData["Title"] = "Quản lý bài viết";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <a href="javascript:void(0)" data-toggle="modal" data-target="#myModal" class="m-0 font-weight-bold text-primary">Thêm bài viết mới</a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table id="dataTable" class="table table-bordered" width="100%" style="min-width: 1000px" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Tên </th>
+                        <th>Hình ảnh</th>
+                        <th>Thời gian</th>
+                        <th>Người đăng</th>
+                        <th>#</th>
+                        <th>#</th>
+                        <th>#</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- Modal Thêm Bài Viết-->
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Bài viết mới</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-12 col-sm-7 col-lg-6">
+                        <div>
+                            <label for="title">Tên</label>
+                            <input type="text" class="form form-control" id="title" />
+                        </div>
+                        <div>
+                            <label for="description">Mô tả</label>
+                            <input type="text" class="form form-control" id="description" />
+                        </div>
+                        <div>
+                            <label for="keywords">Từ khoá</label>
+                            <input type="text" class="form form-control" id="keywords" />
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-5 col-lg-6">
+                        <label for="mainImage">Hình ảnh chính</label>
+                        <div class="d-flex align-items-center">
+                            <input type="file" name="mainImage" id="mainImage" accept="image/*" class="form-control-file" onchange="previewMainImage(event)">
+                            <button type="button" id="deleteMainImage" class="btn btn-sm ml-2" style="display: none;"><i class="fas fa-times"></i></button>
+                        </div>
+                        <img id="mainImagePreview" src="#" alt="Main Image Preview" style="max-width: 100%; display: none; width: 120px; margin-top:10px;">
+                    </div>
+                    <div class="col-12">
+                        <label for="editor">Nội dung</label>
+                        <div id="editor"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <a href="javascript:void(0)" id="btnCreate" class="m-0 font-weight-bold text-primary">Lưu</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- Modal Sữa Bài Viết-->
+<div class="modal fade" id="myModalUpdate">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Sửa bài viết</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-12 col-sm-7 col-lg-6">
+                        <div>
+                            <label for="titleUpdate">Tên</label>
+                            <input type="text" class="form form-control" id="titleUpdate" />
+                        </div>
+                        <div>
+                            <label for="descriptionUpdate">Mô tả</label>
+                            <input type="text" class="form form-control" id="descriptionUpdate" />
+                        </div>
+                        <div>
+                            <label for="keywordsUpdate">Từ khoá</label>
+                            <input type="text" class="form form-control" id="keywordsUpdate" />
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-5 col-lg-6">
+                        <label for="mainImageUpdate">Hình ảnh chính</label>
+                        <div class="d-flex align-items-center">
+                            <input type="file" name="mainImageUpdate" id="mainImageUpdate" accept="image/*" class="form-control-file" onchange="previewMainImage(event)">
+                            <button type="button" id="deleteMainImageUpdate" class="btn btn-sm ml-2" style="display: none;"><i class="fas fa-times"></i></button>
+                        </div>
+                        <img id="mainImagePreviewUpdate" src="#" alt="Main Image Preview" style="max-width: 100%; display: none; width: 120px; margin-top:10px;">
+                    </div>
+                    <div class="col-12">
+                        <label for="editorUpdate">Nội dung</label>
+                        <div id="editorUpdate"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <a href="javascript:void(0)" id="btnUpdate" class="m-0 font-weight-bold text-primary">Lưu</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/ckeditor5-classic-free-full-feature@35.4.1/build/ckeditor.min.js"></script>
+    <script>
+        let editor;
+        ClassicEditor
+            .create(document.querySelector('#editor'), {
+                plugins: ['Essentials',
+                    'Paragraph',
+                    'Heading',
+                    'Bold',
+                    'Italic',
+                    'Underline',
+                    'Strikethrough',
+                    'SourceEditing',
+                    'Subscript',
+                    'Superscript',
+                    'Alignment',
+                    'Indent',
+                    'IndentBlock',
+                    'BlockQuote',
+                    'Link',
+                    'Image',
+                    'ImageCaption',
+                    'ImageStyle',
+                    'ImageToolbar',
+                    'ImageUpload',
+                    'List',
+                    'MediaEmbed',
+                    'PasteFromOffice',
+                    'Table',
+                    'TableToolbar',
+                    'TableProperties',
+                    'TableCellProperties',
+                    'Highlight',
+                    'FontFamily',
+                    'FontSize',
+                    'FontColor',
+                    'FontBackgroundColor', 'GeneralHtmlSupport', /* ... */]
+            })
+            .then(newEditor => {
+                editor = newEditor;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+        let editorUpdate;
+        ClassicEditor
+            .create(document.querySelector('#editorUpdate'), {
+                plugins: ['Essentials',
+                    'Paragraph',
+                    'Heading',
+                    'Bold',
+                    'Italic',
+                    'Underline',
+                    'Strikethrough',
+                    'SourceEditing',
+                    'Subscript',
+                    'Superscript',
+                    'Alignment',
+                    'Indent',
+                    'IndentBlock',
+                    'BlockQuote',
+                    'Link',
+                    'Image',
+                    'ImageCaption',
+                    'ImageStyle',
+                    'ImageToolbar',
+                    'ImageUpload',
+                    'List',
+                    'MediaEmbed',
+                    'PasteFromOffice',
+                    'Table',
+                    'TableToolbar',
+                    'TableProperties',
+                    'TableCellProperties',
+                    'Highlight',
+                    'FontFamily',
+                    'FontSize',
+                    'FontColor',
+                    'FontBackgroundColor', 'GeneralHtmlSupport', /* ... */]
+            })
+            .then(newEditor => {
+                editorUpdate = newEditor;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    </script>
+    <script>
+        function previewMainImage(event) {
+            var input = event.target;
+            var preview = document.getElementById('mainImagePreview');
+            var deleteButton = document.getElementById('deleteMainImage');
+
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    deleteButton.style.display = 'inline'; // Hiển thị nút xoá hình ảnh
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        // Xóa hình ảnh chính khi người dùng nhấp vào nút xoá
+        document.getElementById('deleteMainImage').addEventListener('click', function () {
+            var input = document.getElementById('mainImage');
+            var preview = document.getElementById('mainImagePreview');
+            var deleteButton = document.getElementById('deleteMainImage');
+
+            input.value = ''; // Xóa giá trị của input file
+            preview.src = ''; // Xóa hình ảnh được xem trước
+            preview.style.display = 'none'; // Ẩn hình ảnh được xem trước
+            deleteButton.style.display = 'none'; // Ẩn nút xoá hình ảnh
+        });
+        $("#btnCreate").click(function () {
+            var title = $('#title').val();
+            var content = editor.getData();
+            var description = $('#description').val();
+            var keywords = $('#keywords').val();
+            var mainImage = $('#mainImage')[0].files[0];
+            console.log(title, ",", content, ",", description, ",", keywords, ",", mainImage)
+            if (title && content && description && keywords && mainImage !== undefined) {
+                var formData = new FormData();
+                formData.append('Title', title);
+                formData.append('Content', content);
+                formData.append('Description', description);
+                formData.append('Keywords', keywords);
+                formData.append('mainImage', mainImage);
+
+                $.ajax({
+                    url: '/Admin/News',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        if (response.success) {
+                            $('#dataTable').DataTable().ajax.reload();
+                            showAlertModal('success', response.message);
+                            $('#myModal').modal('hide');
+                        } else {
+                            showAlertModal('danger', response.message);
+                        }
+                    },
+                    error: function () {
+                        showAlertModal('danger', 'Có lỗi xảy ra khi gửi yêu cầu!');
+                    }
+                });
+            } else {
+                showAlertModal('danger', "Vui lòng nhập đủ các trường và chọn hình ảnh");
+            }
+        });
+
+    </script>
+    <script>
+        $('#dataTable').DataTable({
+            "ajax": {
+                "url": "/Admin/News/GetAllNews",
+                "type": "GET",
+                "dataSrc": "result."
+            },
+            "columns": [
+                { "data": "title" },
+                {
+                    "data": "image",
+                    "render": function (data, type, row) {
+                        return '<img src="' + data + '" alt="News Image" width="150px">';
+                    }
+                },
+
+                {
+                    "data": "createdOn",
+                    "render": function (data) {
+                        // Định dạng ngày tháng từ chuỗi ngày tháng
+                        var date = new Date(data);
+                        // Sử dụng các phương thức của đối tượng Date để định dạng ngày tháng
+                        var formattedDate = date.toLocaleDateString("en-US");
+                        return formattedDate;
+                    }
+                },
+                { "data": "userName" },
+                {
+                    "data": null,
+                    "render": function (data, type, row) {
+                        return '<a href="javascript:void(0)" onclick="UpdateNews(' + data.id + ')" class="m-0 font-weight-bold text-primary">Sửa</a>';
+                    }
+                },
+                {
+                    "data": null,
+                    "render": function (data, type, row) {
+                        return '<a href="javascript:void(0)" class="m-0 font-weight-bold text-primary" onclick="DeleteNews(' + data.id + ')">Xóa</a>';
+                    }
+                },
+                {
+                    "data": null,
+                    "render": function (data, type, row) {
+                        if (row.status) {
+                            return 'Đã duyệt';
+                        } else {
+                            return '<a href="javascript:void(0)" class="m-0 font-weight-bold text-primary" onclick="BrowseNews(' + data.id + ')">Duyệt</a>';
+                        }
+                    }
+                }
+
+            ],
+            "columnDefs": [
+                { "width": "25%", "targets": [0] },  // Chiều rộng 20% cho cột title
+                { "width": "25%", "targets": [1] },   // Chiều rộng 10% cho cột image
+                { "width": "15%", "targets": [2] },   // Chiều rộng 10% cho cột createdOn
+                { "width": "15%", "targets": [3] },   // Chiều rộng 10% cho cột userId
+                { "width": "5%", "targets": [4, 5] },  // Chiều rộng 5% cho các cột cuối cùng
+                { "width": "10%", "targets": [6] }  // Chiều rộng 5% cho các cột cuối cùng
+            ],
+            "lengthMenu": [5, 10, 25, 50],
+            "language": {
+                processing: "Message khi đang tải dữ liệu",
+                search: "Tìm kiếm",
+                lengthMenu: "Điều chỉnh số mục trên 1 trang _MENU_ ",
+                info: "Hiển thị _START_ đến _END_ trong  _TOTAL_ mục",
+                infoEmpty: "Không có dữ liệu, Hiển thị 0 bản ghi trong _MAX_ tổng cộng 0 ",
+                infoFiltered: "(Không có sản phẩm trong _MAX_ bản ghi)",
+                loadingRecords: "",
+                zeroRecords: "Không có dữ liệu theo tìm kiếm",
+                emptyTable: "Không có dữ liệu",
+                paginate: {
+                    first: "<<",
+                    previous: "<",
+                    next: ">",
+                    last: ">>"
+                },
+                aria: {
+                    sortAscending: ": Message khi đang sắp xếp theo column",
+                    sortDescending: ": Message khi đang sắp xếp theo column",
+                }
+            },
+            "processing": true,
+            "serverSide": false,
+        });
+    </script>
+    <script>
+        function previewMainImage(event) {
+            var input = event.target;
+            var preview = document.getElementById('mainImagePreviewUpdate');
+            var deleteButton = document.getElementById('deleteMainImageUpdate');
+
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    deleteButton.style.display = 'inline'; // Hiển thị nút xoá hình ảnh
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        // Xóa hình ảnh chính khi người dùng nhấp vào nút xoá
+        document.getElementById('deleteMainImageUpdate').addEventListener('click', function () {
+            var input = document.getElementById('mainImageUpdate');
+            var preview = document.getElementById('mainImagePreviewUpdate');
+            var deleteButton = document.getElementById('deleteMainImageUpdate');
+
+            input.value = ''; // Xóa giá trị của input file
+            preview.src = ''; // Xóa hình ảnh được xem trước
+            preview.style.display = 'none'; // Ẩn hình ảnh được xem trước
+            deleteButton.style.display = 'none'; // Ẩn nút xoá hình ảnh
+        });
+        function UpdateNews(id) {
+            $.ajax({
+                url: "/Admin/News/GetAllNews",
+                type: "GET",
+                dataType: "json",
+                success: function (response) {
+                    if (response.success) {
+                        // console.log(response.result[id-1])
+                        var news = response.result[id-1];
+                        // console.log(news.Title)
+                        // Cập nhật giá trị của các thành phần trong modal
+                        $('#titleUpdate').val(news.title);
+                        $('#descriptionUpdate').val(news.description);
+                        $('#keywordsUpdate').val(news.keywords);
+                        // Đặt hình ảnh chính
+                        $('#mainImagePreviewUpdate').attr('src', news.image).show();
+
+                        // Đặt nội dung HTML
+                        editorUpdate.setData(news.content)
+                        // setOrUpdateCookie(id);
+                        document.cookie = "new=" + id;
+                        // Mở modal
+                        $('#myModalUpdate').modal('show');
+
+                    } else {
+                        showAlertModal('danger', response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    showAlertModal('danger', 'Có lỗi xảy ra khi gửi yêu cầu!');
+                }
+            });
+        }
+        function setOrUpdateCookie(id) {
+            var existingCookie = document.cookie.replace(/(?:(?:^|.*;\s*)new\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+
+            if (existingCookie) {
+                // Nếu cookie đã tồn tại, cập nhật giá trị mới
+                document.cookie = "new=" + id;
+            } else {
+                // Nếu cookie chưa tồn tại, tạo mới
+                document.cookie = "new=" + id;
+            }
+        }
+
+        function getCookieValue(cookieName) {
+            var name = cookieName + "=";
+            var decodedCookie = decodeURIComponent(document.cookie);
+            var cookieArray = decodedCookie.split(';');
+            for (var i = 0; i < cookieArray.length; i++) {
+                var cookie = cookieArray[i];
+                while (cookie.charAt(0) === ' ') {
+                    cookie = cookie.substring(1);
+                }
+                if (cookie.indexOf(name) === 0) {
+                    return cookie.substring(name.length, cookie.length);
+                }
+            }
+            return "";
+        }
+        $("#btnUpdate").click(function () {
+            var title = $('#titleUpdate').val();
+            var content = editorUpdate.getData();
+            var description = $('#descriptionUpdate').val();
+            var keywords = $('#keywordsUpdate').val();
+            var mainImage = $('#mainImageUpdate')[0].files[0];
+
+            var Id = getCookieValue("new");
+            var formData = new FormData();
+            formData.append('Title', title);
+            formData.append('Content', content);
+            formData.append('Description', description);
+            formData.append('Keywords', keywords);
+            formData.append('mainImage', mainImage);
+            formData.append('Id', Id);
+
+            $.ajax({
+                url: '/Admin/News',
+                type: 'Put',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
+                        $('#dataTable').DataTable().ajax.reload();
+                        $('#myModalUpdate').modal('hide');
+                        showAlertModal('success', response.message);
+                    } else {
+                        showAlertModal('danger', response.message);
+                    }
+                },
+                error: function () {
+                    showAlertModal('danger', 'Có lỗi xảy ra khi gửi yêu cầu!');
+                }
+            });
+        });
+    </script>
+    <script>
+        function DeleteNews(Id) {
+            var formData = new FormData();
+            formData.append('Id', Id);
+            $.ajax({
+                url: '/Admin/News',
+                type: 'Delete',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
+                        $('#dataTable').DataTable().ajax.reload();
+                        showAlertModal('success', response.message);
+                    } else {
+                        showAlertModal('danger', response.message);
+                    }
+                },
+                error: function () {
+                    showAlertModal('danger', 'Có lỗi xảy ra khi gửi yêu cầu!');
+                }
+            });
+        }
+        function BrowseNews(Id) {
+            var formData = new FormData();
+            formData.append('Id', Id);
+            $.ajax({
+                url: '/Admin/News/BrowseNews',
+                type: 'Post',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
+                        $('#dataTable').DataTable().ajax.reload();
+                        showAlertModal('success', response.message);
+                    } else {
+                        showAlertModal('danger', response.message);
+                    }
+                },
+                error: function () {
+                    showAlertModal('danger', 'Có lỗi xảy ra khi gửi yêu cầu!');
+                }
+            });
+        }
+    </script>
+}

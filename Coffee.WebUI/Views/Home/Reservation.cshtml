@@ -1,0 +1,136 @@
+﻿@{
+    ViewData["Title"] = "Đặt Bàn";
+    // Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model Coffee.DATA.Models.Book
+<main>
+    <!-- breadcrumb area start -->
+    <section class="breadcrumb-area pt-140 pb-140 bg_img" data-overlay="dark" data-opacity="5" data-background="../assets/images/bg/testimonial-bg-2.jpg">
+        <div class="shape shape__1"><img src="~/assets/images/shape/breadcrumb-shape-1.png" alt=""></div>
+        <div class="shape shape__2"><img src="~/assets/images/shape/breadcrumb-shape-2.png" alt=""></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12 text-center">
+                    <h2 class="page-title">Đặt bàn tại Cafena</h2>
+                    <div class="cafena-breadcrumb breadcrumbs">
+                        <ul class="list-unstyled d-flex align-items-center justify-content-center">
+                            <li class="cafenabcrumb-item duxinbcrumb-begin">
+                                <a asp-controller="Home" asp-action="Index"><span>Trang chủ</span></a>
+                            </li>
+                            <li class="cafenabcrumb-item duxinbcrumb-end">
+                                <span>Đặt bàn</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- breadcrumb area end -->
+    <!-- reservation area start -->
+    <section class="reservation__area reservation__area--2 position-relative pt-120 pb-120">
+        <span class="shape shape__1 position-absolute"><img src="~/assets/images/shape/hero-shape-2-1.png" alt=""></span>
+        <span class="shape shape__2 position-absolute"><img src="~/assets/images/shape/hero-shape-2-2.png" alt=""></span>
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="reservation__wrapper reservation__wrapper--2">
+                        <div class="section-heading section-heading__black text-center mb-35">
+                            <h2 class="title">Đặt bàn</h2>
+                        </div>
+                        @if (ViewBag.Success != null)
+                        {
+                            <div class="alert alert-success" role="alert">
+                                @ViewBag.Success
+                            </div>
+                        }
+                        <div class="reservation__form reservation__form--2 mt-none-30 text-center">
+                            <form id="contactForm" asp-controller="Home" asp-action="Reservation" method="post">
+                                <div class="row">
+                                    <div class="col-xl-6 col-lg-6">
+                                        <div class="from-group mt-30">
+                                            @* <input type="text" name="Name" placeholder="Họ và tên"> *@
+                                            <input asp-for="Name" class="form-control" placeholder="Họ tên bạn">
+                                            <span asp-validation-for="Name" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-6 col-lg-6">
+                                        <div class="from-group mt-30">
+                                            <input asp-for="Phone" class="form-control" placeholder="Điện thoại">
+                                            <span asp-validation-for="Phone" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-6 col-lg-6">
+                                        <div class="from-group mt-30">
+                                            <select asp-for="Seates" id="subject">
+                                                <option value="2">Cho 2 người</option>
+                                                <option value="3">Cho 3 người</option>
+                                                <option value="4">Cho 4 người</option>
+                                                <option value="5">Cho 5 người</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-6 col-lg-6">
+                                        <div class="from-group mt-30">
+                                            <input asp-for="Day" type="date" id="nextDayInput" class="form-control" placeholder="Ngày">
+                                            <span asp-validation-for="Day" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-6 col-lg-6">
+                                        <div class="from-group mt-30">
+                                            <input asp-for="Time" type="time" min="07:00" max="22:00" class="form-control" placeholder="Giờ">
+                                            <span asp-validation-for="Time" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-6 mt-30">
+                                        <div class="form-group">
+                                            <input asp-for="Email" id="email" class="form-control" placeholder="Email">
+                                            <span asp-validation-for="Email" class="text-danger"></span>
+                                            <span class="text-danger" id="checkEmailFalse" style="display: none">Email False</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-12 mt-20 text-center">
+                                        <button type="submit" id="submitBtn" class="site-btn">Đặt bàn</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- reservation area end -->
+</main>
+
+@section Scripts {
+
+    <script>
+        // Lấy ngày hôm sau
+        const nextDay = new Date();
+        nextDay.setDate(nextDay.getDate() + 1);
+
+        // Format ngày hôm sau để phù hợp với định dạng của input type="date"
+        const nextDayFormatted = nextDay.toISOString().slice(0, 10);
+
+        // Đặt giá trị min cho input
+        document.getElementById('nextDayInput').setAttribute('min', nextDayFormatted);
+
+        // Bắt sự kiện input
+        // document.getElementById('nextDayInput').addEventListener('input', function () {
+        //     // Lấy giá trị ngày từ input
+        //     const inputDate = new Date(this.value);
+
+        //     // Kiểm tra nếu ngày đã chọn nhỏ hơn hoặc bằng ngày hôm sau
+        //     if (inputDate <= nextDay) {
+        //         // In thông báo lỗi
+        //         document.getElementById('validationMessage').textContent = "Vui lòng chọn ngày lớn hơn hôm sau.";
+        //         // Đặt giá trị của input về rỗng
+        //         this.value = '';
+        //     } else {
+        //         // Xóa thông báo lỗi nếu ngày hợp lệ
+        //         document.getElementById('validationMessage').textContent = "";
+        //     }
+        // });
+    </script>
+}

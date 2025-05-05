@@ -1,0 +1,525 @@
+﻿@using Coffee.DATA.Models
+@model IEnumerable<ProductModel>;
+@using X.PagedList;
+@using X.PagedList.Mvc.Core;
+@{
+    ViewData["Title"] = "Cửa hàng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Styles {
+    <style>
+        .pp__title a {
+            display: inline-block;
+            width: 85%; /* Độ rộng tối đa mà bạn muốn hiển thị */
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .pagination .active span {
+            background-color: #C7A17A !important;
+            color: #ffffff;
+            border-color: #C7A17A !important;
+        }
+
+        .pagination a {
+            display: flex !important;
+            width: 100%;
+            height: 100%;
+            color: black;
+            align-items: center;
+            justify-content: center;
+            border-radius: 5px;
+        }
+
+            .pagination a:hover {
+                background-color: #C7A17A !important;
+                color: #ffffff;
+                border-color: #C7A17A !important;
+            }
+
+        .product-label {
+            display: inline-flex;
+            height: 36px;
+            justify-content: center;
+            align-items: center;
+            background-repeat: no-repeat;
+            background-size: contain;
+            background-position: center;
+            padding-bottom: 7px;
+            font-size: 14px;
+            color: #fff;
+            font-weight: 500;
+        }
+
+            .product-label.sale {
+                position: absolute;
+                top: 15%;
+                left: -0.3rem;
+                background-image: url('../../assets/images/sale.svg');
+                width: 85px;
+            }
+    </style>
+}
+<main>
+    <!-- breadcrumb area start -->
+    <section class="breadcrumb-area pt-140 pb-140 bg_img" data-overlay="dark" data-opacity="5" data-background="../assets/images/bg/testimonial-bg-2.jpg">
+        <div class="shape shape__1"><img src="~/assets/images/shape/breadcrumb-shape-1.png" alt=""></div>
+        <div class="shape shape__2"><img src="~/assets/images/shape/breadcrumb-shape-2.png" alt=""></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12 text-center">
+                    <h2 class="page-title">Cữa hàng Cafena</h2>
+                    <div class="cafena-breadcrumb breadcrumbs">
+                        <ul class="list-unstyled d-flex align-items-center justify-content-center">
+                            <li class="cafenabcrumb-item duxinbcrumb-begin">
+                                <a asp-controller="Home" asp-action="Index"><span>Trang chủ</span></a>
+                            </li>
+                            <li class="cafenabcrumb-item duxinbcrumb-end">
+                                <span>Cửa hàng</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div id="shop"></div>
+        </div>
+    </section>
+    <!-- breadcrumb area end -->
+    <!-- product popup start -->
+    @{
+        foreach (var item in Model)
+        {
+            var productPopup = "product-popup-" + item.ProductId;
+            <div class="product-popup @productPopup">
+                <div class="view-background">
+                    <div class="row">
+                        <div class="col-md-4 align-self-center">
+                            <div class="quickview d-flex align-items-center justify-content-center">
+                                <div class="quickview__thumb">
+                                    <img src="@item.Image" alt="" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="viewcontent">
+                                <div class="viewcontent__header">
+                                    <h2>@item.Name</h2>
+                                    <a class="view_close product-p-close" href="javascript:void(0)"><i class="fal fa-times"></i></a>
+                                </div>
+                                <div class="pp__price pp__price--2 d-flex align-items-center">
+                                    <h6 class="label" style="font-weight: 700;">Giá - </h6>
+                                    @{
+                                        if (item.DiscountPrice > 0)
+                                        {
+
+                                            <span class="price"> @Convert.ToInt32(item.DiscountPrice).ToString("C0", new System.Globalization.CultureInfo("vi-VN")).Replace(",", ".") / <span class="regular"><del>@Convert.ToInt32(item.Price).ToString("C0", new System.Globalization.CultureInfo("vi-VN")).Replace(",", ".") </del></span></span>
+                                        }
+                                        else
+                                        {
+                                            <span class="price"> @Convert.ToInt32(item.Price).ToString("C0", new System.Globalization.CultureInfo("vi-VN")).Replace(",", ".")</span>
+                                        }
+                                    }
+                                </div>
+                                <div class="viewcontent__stock">
+                                    @{
+                                        if (Convert.ToInt32(item.Quantity) > 0)
+                                        {
+                                            <h4>Hiên trạng :<span> Còn hàng</span></h4>
+                                        }
+                                        else
+                                        {
+                                            <h4>Hiên trạng :<span class="text-danger"> Hiện sản phẩm đã hết hàng</span></h4>
+                                        }
+                                    }
+                                </div>
+                                <div class="viewcontent__details">
+                                    <p>@item.DescriptionShort</p>
+                                </div>
+                                <div class="viewcontent__action">
+                                    <p style="font-weight: 700; color:black">Số lượng còn @item.Quantity</p>
+                                    @{
+                                        if (Convert.ToInt32(item.Quantity) > 0)
+                                        {
+                                            <a class="site-btn m-0" href="javascript:void(0)" onclick="addCart('@item.ProductId',1)">Thêm vào giỏ hàng</a>
+                                        }
+                                    }
+                                </div>
+                                <div class="viewcontent__footer">
+                                    <ul class="list-unstyled">
+                                        <li>DANH MỤC:</li>
+                                        <li>SKU:</li>
+                                        <li>Brand:</li>
+                                    </ul>
+                                    <ul class="list-unstyled">
+                                        <li>@item.categoryName</li>
+                                        <li>2584-MK63</li>
+                                        <li>Brenda</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    <!-- product popup end -->
+    <!-- blog area start -->
+    <div class="blog-area pt-120 pb-105">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="shop-filter-wrapper d-flex justify-content-between align-items-center mb-30">
+                        <div class="sf-left">
+                            <div class="show-text">
+                                <span>Có @Model.Count() sản phẩm trong tổng @ViewBag.CountProducts sản phẩm</span>
+                            </div>
+                        </div>
+                        <div class="sf-right d-flex justify-content-end align-items-center">
+                            <nav>
+                                <div class="nav" id="shop-filter-tab" role="tablist">
+                                    <a class="nav-link active d-none d-sm-block" id="shop-tab-1-tab" data-bs-toggle="tab"
+                                       href="#shop-tab-1" role="tab" aria-controls="shop-tab-1"
+                                       aria-selected="true"><i class="fas fa-th"></i></a>
+                                    <a class="nav-link d-none d-sm-block" id="shop-tab-2-tab" data-bs-toggle="tab" href="#shop-tab-2"
+                                       role="tab" aria-controls="shop-tab-2" aria-selected="false"><i class="fas fa-list-ul"></i></a>
+                                </div>
+                            </nav>
+                            <div class="sort-wrapper ml-45">
+                                <select name="select" id="select" onchange="redirect()">
+                                    <option value="sort">Sắp xếp</option>
+                                    <option value="asc">Tăng dần</option>
+                                    <option value="desc">Giảm dần</option>
+                                    <option value="name">Theo tên</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xl-8 col-lg-8">
+                    <div class="tab-content" id="shop-tabContent">
+                        <div class="tab-pane fade show mt-none-30 active" id="shop-tab-1" role="tabpanel" aria-labelledby="shop-tab-1-tab">
+                            <div class="row">
+                                @{
+                                    if (Model.Count() > 0)
+                                    {
+                                        foreach (var item in Model)
+                                        {
+                                            <div class="col-xl-4 col-lg-6 col-md-6 mt-30">
+                                                <div class="pp__item pp__item--2 active text-center pt-20 pb-20">
+                                                    <div class="pp__action pp__action--2 d-flex align-items-center justify-content-center">
+                                                        @if (Convert.ToInt32(item.Quantity) > 0)
+                                                        {
+                                                            <div class="cart d-flex align-items-center justify-content-center">
+                                                                <a href="javascript:void(0)" onclick="addCart('@item.ProductId',1)"><i class="fal fa-shopping-basket"></i></a>
+                                                            </div>
+                                                        }
+                                                        <div class="view d-flex align-items-center justify-content-center d-none d-sm-block">
+                                                            <a href="javascript:void(0)" onclick="show(@item.ProductId)">
+                                                                <i class="fal fa-eye"></i>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    @if (item.DiscountPrice > 0)
+                                                    {
+                                                        <i class="product-label sale">Ưu đãi lớn</i>
+                                                    }
+                                                    <div class="pp__thumb pp__thumb--2 mt-35">
+                                                        <img class="default" style="width: 190px;height: 150px;" src="@item.Image" alt="">
+                                                        <img class="on-hover" style="width: 190px;height: 150px;" src="@item.ProductImages.First().ImageUrl" alt="">
+                                                    </div>
+                                                    <div class="pp__content pp__content--2 mt-25">
+                                                        <div class="pp__c-top d-flex align-items-center justify-content-center">
+                                                            <div class="pp__cat pp__cat--2">
+                                                                <a href="#0">
+                                                                    @item.categoryName
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                        <h4 class="pp__title pp__title--2">
+                                                            <a href="/san-pham/@item.Url-@item.ProductId">@item.Name</a>
+                                                        </h4>
+                                                        <div class="pp__price pp__price--2 d-flex align-items-center justify-content-center">
+                                                            <h6 class="label" style="font-weight: 700;">Giá - </h6>
+                                                            @{
+                                                                if (item.DiscountPrice > 0)
+                                                                {
+                                                                    <span class="price"> @Convert.ToInt32(item.DiscountPrice).ToString("C0", new System.Globalization.CultureInfo("vi-VN")).Replace(",", ".") / <span class="regular"><del>@Convert.ToInt32(item.Price).ToString("C0", new System.Globalization.CultureInfo("vi-VN")).Replace(",", ".") </del></span></span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span class="price"> @Convert.ToInt32(item.Price).ToString("C0", new System.Globalization.CultureInfo("vi-VN")).Replace(",", ".")</span>
+                                                                }
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="ml-10 mt-10">Không tìm thấy sản phẩm!</span>
+                                    }
+                                }
+                            </div>
+                        </div>
+                        <div class="tab-pane fade mt-none-30" id="shop-tab-2" role="tabpanel" aria-labelledby="shop-tab-2-tab">
+                            <div class="row">
+                                @{
+                                    if (Model.Count() > 0)
+                                    {
+                                        foreach (var item in Model)
+                                        {
+                                            <div class="col-xl-12 mt-30">
+                                                <div class="pp__item pp__item--2 pp__item--list active text-center pt-30 pb-25">
+                                                    @if (item.DiscountPrice > 0)
+                                                    {
+                                                        <i class="product-label sale" style="top:-2% !important">Ưu đãi lớn</i>
+                                                    }
+                                                    <div class="row">
+                                                        <div class="col-lg-4 col-md-4">
+                                                            <div class="pp__thumb pp__thumb--2 pp__thumb--list m-0">
+                                                                <img class="default" style="width: 190px;height: 150px;" src="@item.Image" alt="">
+                                                                <img class="on-hover" style="width: 190px;height: 150px;" src="@item.ProductImages.First().ImageUrl" alt="">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-8 col-md-8">
+                                                            <div class="pp__content pp__content--2 pp__content--list m-0">
+                                                                <div class="pp__c-top d-flex align-items-center">
+                                                                    <div class="pp__cat pp__cat--2">
+                                                                        <a href="#0">@item.categoryName</a>
+                                                                    </div>
+                                                                </div>
+                                                                <h4 class="pp__title pp__title--2 pp__title--list">
+                                                                    <a style="width: 90%!important" href="/san-pham/@item.Url-@item.ProductId">@item.Name</a>
+                                                                </h4>
+                                                                <div class="pp__price pp__price--2 pp__price--list d-flex align-items-center">
+                                                                    <h6 class="label">Giá - </h6>
+                                                                    @{
+                                                                        if (item.DiscountPrice > 0)
+                                                                        {
+
+                                                                            <span class="price"> @Convert.ToInt32(item.DiscountPrice).ToString("C0", new System.Globalization.CultureInfo("vi-VN")).Replace(",", ".") / <span class="regular"><del>@Convert.ToInt32(item.Price).ToString("C0", new System.Globalization.CultureInfo("vi-VN")).Replace(",", ".") </del></span></span>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <span class="price"> @Convert.ToInt32(item.Price).ToString("C0", new System.Globalization.CultureInfo("vi-VN")).Replace(",", ".")</span>
+                                                                        }
+                                                                    }
+                                                                </div>
+                                                                <div class="pp__action pp__action--2 pp__action--list d-flex align-items-center mt-15">
+                                                                    @if (Convert.ToInt32(item.Quantity) > 0)
+                                                                    {
+                                                                        <div class="cart d-flex align-items-center justify-content-center">
+                                                                            <a href="javascript:void(0)" onclick="addCart('@item.ProductId',1)"><i class="fal fa-shopping-basket"></i></a>
+                                                                        </div>
+                                                                    }
+                                                                    <div class=" d-flex align-items-center justify-content-center">
+                                                                        <a href="#0" onclick="show(@item.ProductId)"><i class="fal fa-eye"></i></a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="ml-10 mt-10">Không tìm thấy sản phẩm!</span>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cafena-pagination mt-60">
+                        <ul>
+                            @* <div class="pagination-container mt-4"> *@
+                            @if (Model.Count() > 0)
+                            {
+                                @Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", new
+                                    {
+                                        page = page,
+                                        search = @Context.Request.Query["search"],
+                                        query = @Context.Request.Query["query"],
+                                        searchCategory = @Context.Request.Query["searchCategory"]
+                                    }) + "#shop",
+                                         new X.PagedList.Web.Common.PagedListRenderOptions
+                            {
+                                MaximumPageNumbersToDisplay = 3 // Số lượng trang hiển thị tối đa
+                            })
+                            }
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-4">
+                    <div class="blog__sidebar blog__sidebar--shop mt-none-30">
+                        <div class="widget mt-30">
+                            <h2 class="title">Tìm kiếm</h2>
+                            <div id="searchForm" class="search-widget">
+                                <input type="search" name="query" id="search" placeholder="Tìm kiếm">
+                                <button type="submit"><i class="fal fa-search" onclick="Search()"></i></button>
+                            </div>
+                        </div>
+                        <div class="widget mt-30">
+                            <h2 class="title">Danh mục</h2>
+                            <ul>
+                                @{
+                                    foreach (var item in ViewBag.Category as List<Category>)
+                                    {
+                                        int countProduct = item.Products.Count;
+                                        <li class="cat-item"><a href="cua-hang?searchCategory=@item.Id#shop">@item.Name</a> <span>@countProduct</span></li>
+                                    }
+                                }
+                            </ul>
+                        </div>
+                        <div class="widget mt-30">
+                            <h2 class="title">Sản phẩm mới</h2>
+                            <div class="recent-posts top-products">
+                                @{
+                                    @if (ViewBag.TopProducts != null && ViewBag.TopProducts is List<Product>)
+                                    {
+                                        foreach (var itemProduct in ViewBag.TopProducts)
+                                        {
+                                            <div class="item d-flex align-items-center">
+                                                <div class="thumb">
+                                                    <img style="width: 100%" src="@itemProduct.Image" alt="">
+                                                </div>
+                                                <div class="content">
+
+                                                    <h5 class="rp-title border-effect"><a href="/san-pham/@itemProduct.Url-@itemProduct.Id">@itemProduct.Name</a></h5>
+                                                    <div class="pp__price">
+                                                        @{
+                                                            if (itemProduct.DiscountPrice > 0)
+                                                            {
+
+                                                                <span class="price"> @Convert.ToInt32(itemProduct.DiscountPrice).ToString("C0", new System.Globalization.CultureInfo("vi-VN")).Replace(",", ".") / <span class="regular"><del>@Convert.ToInt32(itemProduct.Price).ToString("C0", new System.Globalization.CultureInfo("vi-VN")).Replace(",", ".") </del></span></span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="price"> @Convert.ToInt32(itemProduct.Price).ToString("C0", new System.Globalization.CultureInfo("vi-VN")).Replace(",", ".")</span>
+                                                            }
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <p>No top products available</p>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- blog area end -->
+
+
+</main>
+@section Scripts {
+    <script>
+        function show(id) {
+            $('.overlay').addClass('show-popup'); // Thêm lớp 'show-popup' cho phần tử có lớp 'overlay'
+            $('.product-popup-' + id).addClass('show-popup'); // Thêm lớp 'show-popup' cho phần tử có lớp 'product-popup-{id}'
+        }
+    </script>
+    <script>
+
+        function redirect() {
+            var selectElement = document.getElementById('select');
+            var selectedValue = selectElement.value;
+            var currentURL = new URL(window.location.href);
+            var searchParams = currentURL.searchParams;
+
+            if (!searchParams) {
+                switch (selectedValue) {
+                    case 'sort':
+                        currentURL.searchParams.set('query', 'sort');
+                        break;
+                    case 'asc':
+                        currentURL.searchParams.set('query', 'asc');
+                        break;
+                    case 'desc':
+                        currentURL.searchParams.set('query', 'desc');
+                        break;
+                    case 'name':
+                        currentURL.searchParams.set('query', 'name');
+                        break;
+                    default:
+                        break;
+                }
+            } else {
+                switch (selectedValue) {
+                    case 'sort':
+                        currentURL.searchParams.set('query', 'sort');
+                        break;
+                    case 'asc':
+                        currentURL.searchParams.set('query', 'asc');
+                        break;
+                    case 'desc':
+                        currentURL.searchParams.set('query', 'desc');
+                        break;
+                    case 'name':
+                        currentURL.searchParams.set('query', 'name');
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+
+            window.location.href = currentURL.toString();
+        }
+
+
+        // Hàm này được gọi khi trang được load lại sau khi chuyển hướng
+        window.onload = function () {
+            var selectElement = document.getElementById('select');
+            var urlParams = new URLSearchParams(window.location.search);
+            var sortParam = urlParams.get('query');
+
+            // Nếu có tham số sort trong URL, chọn option tương ứng
+            if (sortParam) {
+                selectElement.value = sortParam;
+            }
+        }
+
+    </script>
+    <script>
+        function addCart(productId, quantity) {
+            // var count = 1;
+            if (quantity == 0) {
+                quantity = $('#txtNumber_' + productId).val();
+            }
+            console.log(quantity);
+            $.ajax({
+                url: '/Cart/AddToCart',
+                type: 'POST',
+                data: {
+                    product: { Id: productId },
+                    quantity: quantity
+                },
+                success: function (response) {
+                    if (response.success) {
+                        showAlertModal('success', 'Thêm vào giỏ hàng thành công!');
+                        updateCartCount();
+                    } else {
+                        showAlertModal('danger', response.message);
+                    }
+                }
+            });
+
+        }
+    </script>
+    
+}

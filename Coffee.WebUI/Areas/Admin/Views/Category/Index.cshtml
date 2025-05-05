@@ -1,0 +1,230 @@
+﻿@{
+    ViewData["Title"] = "Danh mục sản phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <a href="javascript:void(0)" class="m-0 font-weight-bold text-primary" data-toggle="modal" data-target="#logoutModalCreate">Thêm danh mục mới</a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table  id="dataTable" class="display" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Tên danh mục</th>
+                        <th>#</th>
+                        <th>#</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="logoutModalUpdate" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Sửa danh mục</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body p-3">
+                <input type="hidden" id="categoryId" />
+                <label> Tên danh mục </label>
+                <input type="text" name="name" class="form form-control" id="txtModalName" value="" placeholder="Tên danh mục" />
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="btnSave">Lưu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="logoutModalCreate" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Thêm mới danh mục</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body p-3">
+                <label> Tên danh mục </label>
+                <input type="text" name="name" class="form form-control" id="txtModalNameCreate" value="" placeholder="Tên danh mục" />
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="btnCreate">Lưu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    
+    <script>
+        $(document).ready(function () {
+
+            $(document).on('click', '.edit-category', function () {
+                var categoryName = $(this).data('name');
+                $('#txtModalName').val(categoryName);
+                var categoryUrl = $(this).data('url');
+                $('#txtModalUrl').val(categoryUrl);
+                var categoryId = $(this).data('id');
+                $('#categoryId').val(categoryId);
+            });
+
+            // Gọi hàm getCategoryList() trước khi gắn sự kiện click cho nút "Lưu"
+            // getCategoryList();
+
+            // Sau đó gắn sự kiện click cho nút "Lưu"
+            $('#btnSave').click(function () {
+                var categoryId = $('#categoryId').val();
+                var categoryName = $('#txtModalName').val();
+
+                if (categoryId != "" && categoryName != "") {
+                    $.ajax({
+                        url: '/Admin/Category/Edit',
+                        type: 'POST',
+                        data: {
+                            Id: categoryId,
+                            Name: categoryName,
+                        },
+                        success: function (response) {
+                             $('#logoutModalUpdate').modal('hide');
+                            if (response.success) {
+                                $('#dataTable').DataTable().ajax.reload();
+                                showAlertModal('success', response.message);
+                            } else {
+                                showAlertModal('danger', response.message);
+                            }
+                        },
+                        error: function () {
+
+                            showAlertModal('danger', 'Có lỗi xảy ra khi gửi yêu cầu!');
+                        }
+                    });
+                } else {
+                    $('#logoutModalUpdate').modal('hide');
+                    showAlertModal('danger', 'Các trường không được để trống!');
+                }
+            });
+            $('#btnCreate').click(function () {
+                var categoryName = $('#txtModalNameCreate').val();
+
+                if (categoryName != "") {
+                    $.ajax({
+                        url: '/Admin/Category/Create',
+                        type: 'POST',
+                        data: {
+                            Name: categoryName,
+                        },
+                        success: function (response) {
+                            $('#logoutModalCreate').modal('hide');
+                            if (response.success) {
+                                $('#dataTable').DataTable().ajax.reload();
+                                showAlertModal('success', response.message);
+                            } else {
+                                showAlertModal('danger', response.message);
+                            }
+                        },
+                        error: function () {
+                            showAlertModal('danger', 'Có lỗi xảy ra khi gửi yêu cầu!');
+                        }
+                    });
+                } else {
+                    $('#logoutModalCreate').modal('hide');
+                    showAlertModal('danger', 'Các trường không được để trống!');
+                }
+            });
+        });
+
+        $('#dataTable').DataTable({
+            "ajax": {
+                "url": "/Admin/Category/GetAll",
+                "type": "GET",
+                "dataSrc": "categories"
+            },
+            "columns": [
+                { "data": "id" },
+                { "data": "name" },
+                {
+                    "data": null,
+                    "render": function (data, type, row) {
+                        return '<button class="btn btn-primary edit-category" data-id="' + data.id + '" data-name="' + data.name + '" data-url="' + data.url + '" data-toggle="modal" data-target="#logoutModalUpdate">Sửa</button>';
+                    }
+                },
+                {
+                    "data": null,
+                    "render": function (data, type, row) {
+                        return '<button class="btn btn-danger delete-category" data-id="' + data.id + '">Xóa</button>';
+                    }
+                }
+            ],
+            "lengthMenu": [5,10, 25, 50, { label: 'Tất cả', value: -1 }],
+            "language": {
+                processing: "Message khi đang tải dữ liệu",
+                search: "Tìm kiếm",
+                lengthMenu: "Điều chỉnh số lượng bản ghi trên 1 trang _MENU_ ",
+                info: "Bản ghi từ _START_ đến _END_ Trong tổng cộng _TOTAL_ bản ghi",
+                infoEmpty: "Không có dữ liệu, Hiển thị 0 bản ghi trong _MAX_ tổng cộng 0 ",
+                infoFiltered: "(Không có sản phẩm trong _MAX_ bản ghi)",
+                // infoPostFix: "Alo Alo", // Cái này khi thêm vào nó sẽ đứng sau info
+                loadingRecords: "",
+                zeroRecords: "Không có dữ liệu theo tìm kiếm",
+                emptyTable: "Không có dữ liệu",
+                paginate: {
+                    first: "Trang đầu",
+                    previous: "Trang trước",
+                    next: "Trang sau",
+                    last: "Trang cuối"
+                },
+                aria: {
+                    sortAscending: ": Message khi đang sắp xếp theo column",
+                    sortDescending: ": Message khi đang sắp xếp theo column",
+                }
+            },
+            "processing": true,
+            "serverSide": false,
+        });
+
+        // Xử lý sự kiện khi nhấp vào nút "Sửa"
+        $(document).on('click', '.edit-category', function () {
+            var categoryId = $(this).data('id');
+            var categoryName = $(this).data('name');
+            var categoryUrl = $(this).data('url');
+            // Thực hiện các hành động cần thiết với dữ liệu categoryId, categoryName, categoryUrl
+        });
+
+        $(document).on('click', '.delete-category', function () {
+            var categoryId = $(this).data('id');
+            del(categoryId); // Gọi hàm del để xóa danh mục
+        });
+
+        function del(categoryId) {
+            if (confirm("Bạn có chắc chắn muốn xóa danh mục này không?")) {
+                $.ajax({
+                    url: '/Admin/Category/Delete',
+                    type: 'Delete',
+                    data: { Id: categoryId },
+                    success: function (response) {
+                        if (response.success) {
+                            $('#dataTable').DataTable().ajax.reload();
+                            showAlertModal('success', response.message);
+                        } else {
+                            showAlertModal('danger', response.message);
+                        }
+                    },
+                    error: function () {
+                        showAlertModal('danger', 'Có lỗi xảy ra khi gửi yêu cầu!');
+                    }
+                });
+            }
+        }
+    </script>
+}

@@ -1,0 +1,145 @@
+﻿
+@{
+    ViewData["Title"] = "Quản lý đặt bàn";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <a href="javascript:void(0)" data-toggle="modal" data-target="#myModal" class="m-0 font-weight-bold text-primary">Đơn đặt bàn</a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table id="dataTable" class="table table-bordered" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Họ và tên</th>
+                        <th>Số điện thoại</th>
+                        <th>Số người</th>
+                        <th>Email</th>
+                        <th>Ngày</th>
+                        <th>Giờ</th>
+                        <th>#</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <!-- Thư viện real-time Signalr -->
+    <script src="https://cdn.jsdelivr.net/npm/@@microsoft/signalr@@5.0.0/dist/browser/signalr.min.js"></script>
+    <script>
+        var connection = new signalR.HubConnectionBuilder().withUrl("/notificationHub").build();
+        connection.on("ReceiveMessage", function () {
+            showAlertModal('success', "Đã có đơn đặt bàn mới!");
+            $('#dataTable').DataTable().ajax.reload();
+        });
+
+        // Hàm để khởi động lại kết nối
+        function startConnection() {
+            connection.start().then(function () {
+                console.log("Connection started");
+            }).catch(function (err) {
+                console.error("Error while starting connection: " + err);
+                // Nếu không thể kết nối, thực hiện tái kết nối sau một khoảng thời gian
+                setTimeout(startConnection, 5000); // Ví dụ: kết nối lại sau 5 giây
+            });
+        }
+
+        // Khởi động kết nối ban đầu
+        startConnection();
+
+        // Xử lý sự kiện khi kết nối bị đóng
+        connection.onclose(function (error) {
+            console.log("Connection closed: " + error);
+            // Nếu kết nối bị đóng, thực hiện tái kết nối sau một khoảng thời gian
+            setTimeout(startConnection, 5000); // Ví dụ: kết nối lại sau 5 giây
+        });
+    </script>
+    <script>
+        $('#dataTable').DataTable({
+            "ajax": {
+                "url": "/Admin/Book/GetAllBook",
+                "type": "GET",
+                "dataSrc": "result."
+            },
+            "columns": [
+                { "data": "name" },
+                { "data": "phone" },
+                { "data": "seates" },
+                { "data": "email" },
+                {
+                    "data": "day",
+                    "render": function (data) {
+                        // Định dạng ngày tháng từ chuỗi ngày tháng
+                        var date = new Date(data);
+                        // Sử dụng các phương thức của đối tượng Date để định dạng ngày tháng
+                        var formattedDate = date.toLocaleDateString("vn-VN");
+                        return formattedDate;
+                    }
+                },
+                {
+                    "data": "time",
+                },
+                {
+                    "data": null,
+                    "render": function (data, type, row) {
+                        if (row.status) {
+                            return 'Đã duyệt';
+                        } else {
+                            return '<a href="javascript:void(0)" class="m-0 font-weight-bold text-primary" onclick="Browse(' + data.id + ')">Duyệt</a>';
+                        }
+                    }
+                }
+            ],
+            "lengthMenu": [5, 10, 25, 50],
+            "language": {
+                processing: "Message khi đang tải dữ liệu",
+                search: "Tìm kiếm",
+                lengthMenu: "Điều chỉnh số mục trên 1 trang _MENU_ ",
+                info: "Hiển thị _START_ đến _END_ trong  _TOTAL_ mục",
+                infoEmpty: "Không có dữ liệu, Hiển thị 0 bản ghi trong _MAX_ tổng cộng 0 ",
+                infoFiltered: "(Không có sản phẩm trong _MAX_ bản ghi)",
+                loadingRecords: "",
+                zeroRecords: "Không có dữ liệu theo tìm kiếm",
+                emptyTable: "Không có dữ liệu",
+                paginate: {
+                    first: "<<",
+                    previous: "<",
+                    next: ">",
+                    last: ">>"
+                },
+                aria: {
+                    sortAscending: ": Message khi đang sắp xếp theo column",
+                    sortDescending: ": Message khi đang sắp xếp theo column",
+                }
+            },
+            // "processing": true,
+            // "serverSide": false,
+        });
+        function Browse(Id) {
+            var formData = new FormData();
+            showLoading();
+            formData.append('Id', Id);
+            $.ajax({
+                url: '/Admin/Book',
+                type: 'Post',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
+                        $('#dataTable').DataTable().ajax.reload();
+                        showAlertModal('success', response.message);
+                    } else {
+                        showAlertModal('danger', response.message);
+                    }
+                },
+                error: function () {
+                    showAlertModal('danger', 'Có lỗi xảy ra khi gửi yêu cầu!');
+                }
+            });
+        }
+    </script>
+}
+

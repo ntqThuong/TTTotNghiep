@@ -1,0 +1,66 @@
+﻿@{
+    ViewData["Title"] = "Đổi mật khẩu";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/assets/css/css_Login.css" />
+}
+<div class="m-auto">
+    <div class="login-form">
+        <h2 class="text-center mb-4">Xác thực </h2>
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input class="form-control" name="email" readonly value="@ViewBag.Email" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input class="form-control" name="pass" type="password" placeholder="Nhập email" />
+        </div>
+        <center id="next">
+            <a href="javascript:void(0)" id="btnSave" class="site-btn">Gữi</a>
+        </center>
+    </div>
+</div>
+<br />
+@section Scripts {
+    <script>
+        $('#btnSave').click(function () {
+            var email = $("input[name='email']").val();
+            var pass = $("input[name='pass']").val();
+
+            // Check if the password is null or empty
+            if (pass === null || pass.trim() === "") {
+                showAlertModal('danger', 'Vui lòng nhập mật khẩu!');
+                return; // Exit the function early if the password is null or empty
+            }
+
+            // Continue with the AJAX request
+            $("#btnSave").hide();
+            $.ajax({
+                type: "POST",
+                url: "/Account/ResetPassword",
+                data: { password: pass, email: email },
+                success: function (response) {
+                    if (response.success) {
+                        showAlertModal('success', response.message);
+                        // Chờ 5 giây trước khi chuyển trang
+                        setTimeout(function () {
+                            // Thực hiện chuyển trang
+                            window.location.href = "/login";
+                        }, 5000); // 5000 milliseconds = 5 giây
+
+                    } else {
+                        showAlertModal('danger', response.message);
+                        $("#btnSave").show();
+                    }
+                },
+                error: function (xhr, status, error) {
+                    // Handle error
+                    console.error("Error:", error);
+                    $("#btnSave").show();
+                }
+            });
+        });
+    </script>
+}

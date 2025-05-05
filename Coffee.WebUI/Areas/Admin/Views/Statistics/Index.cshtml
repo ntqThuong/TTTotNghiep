@@ -1,0 +1,31 @@
+﻿@{
+    ViewData["Title"] = "Thông kê doanh thu";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+@{
+    // Lấy năm hiện tại
+    var currentYear = DateTime.Now.Year;
+}
+<!-- Content Row -->
+<div class="row">
+    <div class="col-12">
+        <!-- Area Chart -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Doanh thu năm @currentYear</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-area">
+                    <canvas id="myAreaChart"></canvas>
+                </div>
+                <hr>
+                Báo cáo thu nhập năm 
+                <code>@currentYear</code>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/admin/vendor/chart.js/Chart.min.js"></script>
+    <script src="~/admin/js/demo/chart-area-demo.js"></script>
+}

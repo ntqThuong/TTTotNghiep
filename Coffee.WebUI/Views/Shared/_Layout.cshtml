@@ -1,0 +1,113 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="~/assets/css/lightcase.css">
+    <link rel="stylesheet" href="~/assets/css/meanmenu.css">
+    <link rel="stylesheet" href="~/assets/css/nice-select.css">
+    <link rel="stylesheet" href="~/assets/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="~/assets/css/animate.min.css">
+    <link rel="stylesheet" href="~/assets/css/jquery-ui.css">
+    <link rel="stylesheet" href="~/assets/css/main.css">
+    @* font *@
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand&display=swap" rel="stylesheet">
+    @RenderSection("Styles", required: false)
+</head>
+<body>
+    <!--Header start-->
+    @Html.Partial("_Header")
+    @* @Html.Partial("_Cart") *@
+    <div class="overlay"></div>
+    <!--Header end-->
+    @RenderBody()
+    <!--Footer start-->
+    @Html.Partial("_Footer")
+    <!--Footer end-->
+    <!-- Modal -->
+    <div class="modal fade" id="alertModal" tabindex="-1" aria-labelledby="alertModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="alertModalLabel">Thông báo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="alertModalBody">
+                    ...
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="~/assets/js/jquery-2.2.4.min.js"></script>
+    <script src="~/assets/js/bootstrap.bundle.min.js"></script>
+    <script src="~/assets/js/jquery.meanmenu.min.js"></script>
+    <script src="~/assets/js/jquery.nice-select.min.js"></script>
+    <script src="~/assets/js/lightcase.js"></script>
+    <script src="~/assets/js/owl.carousel.min.js"></script>
+    <script src="~/assets/js/tilt.jquery.min.js"></script>
+    <script src="~/assets/js/wow.min.js"></script>
+    <script src="~/assets/js/jquery.easing.min.js"></script>
+    <script src="~/assets/js/scrollwatch.js"></script>
+    <script src="~/assets/js/sticky-header.js"></script>
+    <script src="~/assets/js/waypoint.js"></script>
+    <script src="~/assets/js/imagesloaded.pkgd.min.js"></script>
+    <script src="~/assets/js/isotope.pkgd.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDfpGBFn5yRPvJrvAKoGIdj1O1aO9QisgQ"></script>
+    <script src="~/assets/js/jquery-ui-slider-range.js"></script>
+    <script src="~/assets/js/main.js"></script>
+    <script src="~/assets/js/cart.js"></script>
+    <script src="~/assets/js/js_login.js"></script>
+    <script>
+        function updateCartCount() {
+            $.ajax({
+                url: '/Cart/GetCart',
+                type: 'GET',
+                success: function (data) {
+                    // console.log(data.cartCount)
+                    document.getElementById("txtCart").innerHTML = data.cartCount;
+                    document.getElementById("txtCartRe").innerHTML = data.cartCount;
+                    document.getElementById("txtCartPopup").innerHTML = data.cartCount;
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        }
+        $(document).ready(function () {
+            updateCartCount()
+        });
+        function showAlertModal(state, message) {
+            var modalBody = $('#alertModalBody');
+            var alertClass = 'alert-primary'; // Default to primary color
+
+            // Set alert color based on state
+            if (state === 'success') {
+                alertClass = 'alert-success';
+            } else if (state === 'danger') {
+                alertClass = 'alert-danger';
+            }
+
+            // Set alert message and color
+            modalBody.html('<div class="alert ' + alertClass + '" role="alert">' + message + '</div>');
+
+            $('#alertModal').modal('show'); // Show the modal
+            updateCartCount();
+            setTimeout(function () {
+                $('#alertModal').modal('hide'); // Hide the modal after 5 seconds
+            }, 5000);
+        }
+        function Search() {
+            var selectElement = document.getElementById('search');
+            var selectedValue = selectElement.value;
+            var currentURL = new URL(window.location.href);
+            var searchParams = currentURL.searchParams;
+            currentURL.searchParams.set('search', selectedValue);
+            window.location.href = currentURL.toString();
+        }
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

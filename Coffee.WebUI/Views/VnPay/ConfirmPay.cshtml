@@ -1,0 +1,49 @@
+﻿﻿@{
+    ViewData["Title"] = "ConfirmPay";
+}
+
+<br />
+@{
+    if (ViewBag.ResponseCode == "00")
+    {
+        <div class="container">
+            <h1>Cảm ơn quý khách đã mua sản phẩm</h1>
+            <h2>Thông tin thanh toán:</h2>
+            <hr />
+            <ul>
+                <li style="color:black">
+                    Mã thanh toán:
+                    <b> @Model.vnp_TxnRef</b>
+                </li>
+                <li style="color:black">
+                    Số tiền thanh toán:
+                    <b> @Model.vnp_Amount VNĐ</b>
+                </li>
+                <li style="color:black">
+                    Ngân hàng:
+                    <b>@Model.vnp_BankCode</b>
+                </li>
+                <li style="color:black">
+                    Loại thẻ:
+                    <b>@Model.vnp_CardType</b>
+                </li>
+                <li style="color:black">
+                    Ngày thanh toán:
+                    <b>@Model.vnp_PayDate</b>
+                </li>
+            </ul>
+            <hr />
+            <div class="d-flex justify-content-end">
+                <a class="site-btn" asp-controller="Home" asp-action="Index">Về trang chủ</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="container">
+            <p>Đã có lỗi xảy ra:</p>
+            <span>@ViewBag.ResponseCode</span>
+        </div>
+    }
+}
+<br />

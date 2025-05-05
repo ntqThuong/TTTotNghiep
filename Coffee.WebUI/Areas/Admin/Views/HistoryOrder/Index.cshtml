@@ -1,0 +1,299 @@
+﻿@{
+    ViewData["Title"] = "Báo cáo đơn hàng";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    // Lấy ngày hiện tại
+    var today = DateTime.Today.ToString("yyyy-MM-dd");
+    var motnh = DateTime.Now.Month;
+}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex align-items-center">
+        <p href="javascript:void(0)" class="m-0 font-weight-bold text-primary">Báo cáo đơn hàng theo ngày</p>
+        <input class="form form-control" style="margin-left: 10px; width:max-content" type="date" id="txtDate" value="@today" />
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table id="dataTable" class="table table-bordered" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Tên khách hàng</th>
+                        <th>Thời gian</th>
+                        <th>Tổng tiền</th>
+                        <th>Thanh toán</th>
+                        <th>Giao hàng</th>
+                        @* <th>Người giao</th> *@
+                        <th>#</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex align-items-center">
+        <div href="javascript:void(0)" style="width: 100%" class="m-0 font-weight-bold text-primary d-flex align-items-center">
+            <span style="width: max-content"> Báo cáo đơn hàng theo</span>
+            <select id="month" style="width: max-content; margin: 0px 10px" class="form form-control" name="month">
+                <option value="">Chọn tháng</option>
+                <option value="1">Tháng 1</option>
+                <option value="2">Tháng 2</option>
+                <option value="3">Tháng 3</option>
+                <option value="4">Tháng 4</option>
+                <option value="5">Tháng 5</option>
+                <option value="6">Tháng 6</option>
+                <option value="7">Tháng 7</option>
+                <option value="8">Tháng 8</option>
+                <option value="9">Tháng 9</option>
+                <option value="10">Tháng 10</option>
+                <option value="11">Tháng 11</option>
+                <option value="12">Tháng 12</option>
+            </select>
+            <span style="width: max-content">trong năm 2024</span>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table id="dataTableMonth" class="table table-bordered" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Tên khách hàng</th>
+                        <th>Thời gian</th>
+                        <th>Tổng tiền</th>
+                        <th>Thanh toán</th>
+                        <th>Giao hàng</th>
+                        @* <th>Người giao</th> *@
+                        <th>#</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="myModalUpdate">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Thông tin chi tiết đơn hàng</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div>
+                    <label for="titleUpdate">Mã đơn: <span id="orderId"></span></label>
+                </div>
+                <div>
+                    <label for="descriptionUpdate">Sản phẩm</label>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Tên sản phẩm</th>
+                                <th>Số lượng</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orderDetailsBody">
+                            <!-- Order details will be dynamically inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#dataTable').DataTable({
+                "lengthMenu": [5, 10, 25, 50],
+                "language": {
+                    processing: "Message khi đang tải dữ liệu",
+                    search: "Tìm kiếm",
+                    lengthMenu: "Điều chỉnh số mục trên 1 trang _MENU_ ",
+                    info: "Hiển thị _START_ đến _END_ trong  _TOTAL_ mục",
+                    infoEmpty: "Không có dữ liệu, Hiển thị 0 bản ghi trong _MAX_ tổng cộng 0 ",
+                    infoFiltered: "(Không có sản phẩm trong _MAX_ bản ghi)",
+                    loadingRecords: "",
+                    zeroRecords: "Không có dữ liệu theo tìm kiếm",
+                    emptyTable: "Không có dữ liệu",
+                    paginate: {
+                        first: "<<",
+                        previous: "<",
+                        next: ">",
+                        last: ">>"
+                    },
+                    aria: {
+                        sortAscending: ": Message khi đang sắp xếp theo column",
+                        sortDescending: ": Message khi đang sắp xếp theo column",
+                    }
+                },
+                "columnDefs": [
+                    { "width": "150px", "targets": [3, 4] },  // Chiều rộng 5% cho các cột cuối cùng
+                ],
+            });
+            $('#dataTableMonth').DataTable({
+                "lengthMenu": [5, 10, 25, 50],
+                "language": {
+                    processing: "Message khi đang tải dữ liệu",
+                    search: "Tìm kiếm",
+                    lengthMenu: "Điều chỉnh số mục trên 1 trang _MENU_ ",
+                    info: "Hiển thị _START_ đến _END_ trong  _TOTAL_ mục",
+                    infoEmpty: "Không có dữ liệu, Hiển thị 0 bản ghi trong _MAX_ tổng cộng 0 ",
+                    infoFiltered: "(Không có sản phẩm trong _MAX_ bản ghi)",
+                    loadingRecords: "",
+                    zeroRecords: "Không có dữ liệu theo tìm kiếm",
+                    emptyTable: "Không có dữ liệu",
+                    paginate: {
+                        first: "<<",
+                        previous: "<",
+                        next: ">",
+                        last: ">>"
+                    },
+                    aria: {
+                        sortAscending: ": Message khi đang sắp xếp theo column",
+                        sortDescending: ": Message khi đang sắp xếp theo column",
+                    }
+                },
+                "columnDefs": [
+                    { "width": "150px", "targets": [3, 4] },  // Chiều rộng 5% cho các cột cuối cùng
+                ],
+            });
+        });
+
+        $(document).ready(function () {
+            // Hàm xử lý sự kiện khi thay đổi giá trị của ô nhập liệu ngày tháng
+            $('#txtDate').change(function () {
+                // Lấy giá trị ngày tháng mới từ ô nhập liệu
+                var selectedDate = $(this).val();
+                // Gọi hàm để tải lại dữ liệu AJAX với giá trị ngày tháng mới
+                loadData(selectedDate);
+            });
+
+            // Hàm tải lại dữ liệu AJAX
+            function loadData(selectedDate) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/Admin/HistoryOrder/GetDateHistoryOrder',
+                    data: { dateTime: selectedDate },
+                    success: function (response) {
+                        if (response.success) {
+                            // Xóa dữ liệu cũ trong bảng
+                            $('#dataTable').DataTable().clear().draw();
+
+                            //Thêm dữ liệu mới vào bảng
+                            response.result.forEach(function (item) {
+                                // Định dạng ngày tháng theo giờ Việt Nam
+                                var formattedDate = moment(item.finishDay).format('DD/MM/YYYY HH:mm');
+
+                                // Xác định văn bản cho trường payStatus và orderStatus
+                                var payStatusText = item.payStatus ? "Rồi" : "Chưa";
+                                var orderStatusText = item.orderStatus ? "Rồi" : "Chưa";
+
+                                // Thêm dữ liệu vào bảng
+                                $('#dataTable').DataTable().row.add([
+                                    item.name,
+                                    formattedDate,
+                                    item.total + ' vnđ',
+                                    payStatusText,
+                                    orderStatusText,
+                                    // item.staffName,
+                                    '<a href="#" class="m-0 font-weight-bold text-primary" onclick=ShowDetail(' + item.id + ')>Chi tiết</a>'
+                                ]).draw(false);
+                            });
+                        } else {
+                            console.error(response.error);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(xhr.responseText);
+                    }
+                });
+            }
+
+            // Gọi hàm tải lại dữ liệu khi trang được tải
+            loadData($('#txtDate').val());
+        });
+        $('#month').change(function () {
+            var selectedValue = $(this).val();
+            $.ajax({
+                type: 'POST',
+                url: '/Admin/HistoryOrder/GetMonthHistoryOrder?month=' + selectedValue,
+                // data: { dateTime: selectedDate },
+                success: function (response) {
+                    if (response.success) {
+                        // Xóa dữ liệu cũ trong bảng
+                        $('#dataTableMonth').DataTable().clear().draw();
+
+                        //Thêm dữ liệu mới vào bảng
+                        response.result.forEach(function (item) {
+                            // Định dạng ngày tháng theo giờ Việt Nam
+                            var formattedDate = moment(item.finishDay).format('DD/MM/YYYY HH:mm');
+
+                            // Xác định văn bản cho trường payStatus và orderStatus
+                            var payStatusText = item.payStatus ? "Rồi" : "Chưa";
+                            var orderStatusText = item.orderStatus ? "Rồi" : "Chưa";
+
+                            // Thêm dữ liệu vào bảng
+                            $('#dataTableMonth').DataTable().row.add([
+                                item.name,
+                                formattedDate,
+                                item.total + ' vnđ',
+                                payStatusText,
+                                orderStatusText,
+                                // item.staffName,
+                                '<a href="#" class="m-0 font-weight-bold text-primary" onclick=ShowDetail(' + item.id + ')>Chi tiết</a>'
+                            ]).draw(false);
+                        });
+                    } else {
+                        console.error(response.error);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        });
+    </script>
+    <script>
+        function ShowDetail(Id) {
+            var formData = new FormData();
+            formData.append('Id', Id);
+            $.ajax({
+                url: '/Admin/Order/GetAllOrderDetail',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
+                        $('#orderId').text(Id); // Set the order ID in the modal
+                        var orderDetails = response.result;
+                        var tbody = $('#orderDetailsBody');
+                        tbody.empty(); // Clear any existing rows
+                        $.each(orderDetails, function (index, detail) {
+                            var row = '<tr>' +
+                                '<td>' + detail.productName + '</td>' +
+                                '<td>' + detail.quantity + '</td>' +
+                                '</tr>';
+                            tbody.append(row); // Append new row to tbody
+                        });
+                        $('#myModalUpdate').modal('show');
+                    } else {
+                        showAlertModal('danger', response.error);
+                    }
+                },
+                error: function () {
+                    showAlertModal('danger', 'Có lỗi xảy ra khi gửi yêu cầu!');
+                }
+            });
+        }
+    </script>
+}

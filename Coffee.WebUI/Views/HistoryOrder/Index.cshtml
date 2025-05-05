@@ -1,0 +1,166 @@
+﻿@{
+    ViewData["Title"] = "Lịch sử mua hàng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<br />
+<br />
+<br />
+<div class="container">
+    <div style="overflow:auto">
+        <table id="dataTable" class="table" width="100%" style="min-width: 700px" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>Mã code </th>
+                    <th>Tổng tiền</th>
+                    <th>Ngày thanh toán</th>
+                    <th>Trạng thái</th>
+                    <th>Giao hàng</th>
+                    <th>#</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+<br />
+<br />
+<br />
+<!-- Modal -->
+<div class="modal fade" id="myModalUpdate" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Thông tin đơn hàng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <label for="titleUpdate">Mã đơn: <span id="orderId"></span></label>
+                </div>
+                <div>
+                    <label for="descriptionUpdate">Sản phẩm chi tiết</label>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Tên sản phẩm</th>
+                                <th>Số lượng</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orderDetailsBody">
+                            <!-- Order details will be dynamically inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/admin/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/admin/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script>
+        $('#dataTable').DataTable({
+            "ajax": {
+                "url": "/HistoryOrder/GetAllOrder/",
+                "type": "Get",
+                "dataSrc": "result."
+            },
+            "columns": [
+                { "data": "id" },
+                { "data": "total", },
+                {
+                    "data": "finishDay",
+                    "render": function (data) {
+                        // Chuyển đổi ngày giờ sang định dạng ngày giờ Việt Nam
+                        var createdDate = new Date(data);
+                        var formattedDate = createdDate.toLocaleString('vi-VN');
+                        return formattedDate;
+                    }
+                },
+                {
+                    "data": "payStatus",
+                    "render": function (data) {
+                        // Hiển thị "Đã mua" nếu giá trị là true, ngược lại là "Chưa mua"
+                        return data === true ? "Đã thanh toán" : "Chưa thanh toán";
+                    }
+                },
+                {
+                    "data": "orderStatus",
+                    "render": function (data) {
+                        // Hiển thị "Đã mua" nếu giá trị là true, ngược lại là "Chưa mua"
+                        return data === true ? "Đã giao" : "Chưa giao";
+                    }
+                },
+                {
+                    "data": null,
+                    "render": function (data, type, row) {
+                        return '<a href="javascript:void(0)" class="btn btn-primary" onclick="ShowModalDetail(' + data.id + ')">Chi tiết</a>';
+                    }
+                }
+            ],
+            "order": [
+                [0, 'desc'] // Sắp xếp cột đầu tiên (cột ID) theo thứ tự giảm dần
+            ],
+            "lengthMenu": [5, 10, 25, 50],
+            "language": {
+                processing: "Message khi đang tải dữ liệu",
+                search: "Tìm kiếm",
+                lengthMenu: "Điều chỉnh số mục trên 1 trang _MENU_ ",
+                info: "Hiển thị _START_ đến _END_ trong  _TOTAL_ mục",
+                infoEmpty: "Không có dữ liệu, Hiển thị 0 bản ghi trong _MAX_ tổng cộng 0 ",
+                infoFiltered: "(Không có sản phẩm trong _MAX_ bản ghi)",
+                loadingRecords: "",
+                zeroRecords: "Không có dữ liệu theo tìm kiếm",
+                emptyTable: "Không có dữ liệu",
+                paginate: {
+                    first: "<<",
+                    previous: "<",
+                    next: ">",
+                    last: ">>"
+                },
+                aria: {
+                    sortAscending: ": Message khi đang sắp xếp theo column",
+                    sortDescending: ": Message khi đang sắp xếp theo column",
+                }
+            },
+        });
+    </script>
+    <script>
+        function ShowModalDetail(Id) {
+            var formData = new FormData();
+            formData.append('Id', Id);
+            $.ajax({
+                url: '/HistoryOrder/GetAllOrderDetail',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
+                        $('#orderId').text(Id); // Set the order ID in the modal
+                        var orderDetails = response.result;
+                        var tbody = $('#orderDetailsBody');
+                        tbody.empty(); // Clear any existing rows
+                        $.each(orderDetails, function (index, detail) {
+                            var row = '<tr>' +
+                                '<td>' + detail.productName + '</td>' +
+                                '<td>' + detail.quantity + '</td>' +
+                                '</tr>';
+                            tbody.append(row); // Append new row to tbody
+                        });
+                        $('#myModalUpdate').modal('show');
+                    } else {
+                        showAlertModal('danger', response.error);
+                    }
+                },
+                error: function () {
+                    showAlertModal('danger', 'Có lỗi xảy ra khi gửi yêu cầu!');
+                }
+            });
+        }
+    </script>
+}

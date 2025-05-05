@@ -1,0 +1,370 @@
+﻿@{
+    ViewData["Title"] = "Giỏ hàng";
+}
+@section Styles {
+    <style>
+        .title-cart {
+            font-size: 15px;
+            text-transform: uppercase;
+            color: #000;
+            font-weight: 700;
+            border: none;
+            padding-left: 0px;
+            padding-bottom: 20px;
+        }
+
+        .amount_mobie{
+            display: inline-block;
+            width: 180px; /* Độ rộng tối đa mà bạn muốn hiển thị */
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            font-size: 15px;
+        }
+
+        .amount_mobie span {
+            color: black;
+        }
+    </style>
+
+}
+<main>
+    <!-- breadcrumb area start -->
+    <section class="breadcrumb-area pt-140 pb-140 bg_img" data-overlay="dark" data-opacity="5" data-background="../assets/images/bg/testimonial-bg-2.jpg">
+        <div class="shape shape__1"><img src="~/assets/images/shape/breadcrumb-shape-1.png" alt=""></div>
+        <div class="shape shape__2"><img src="~/assets/images/shape/breadcrumb-shape-2.png" alt=""></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12 text-center">
+                    <h2 class="page-title">Giỏ hàng</h2>
+                    <div class="cafena-breadcrumb breadcrumbs">
+                        <ul class="list-unstyled d-flex align-items-center justify-content-center">
+                            <li class="cafenabcrumb-item duxinbcrumb-begin">
+                                <a asp-controller="Home" asp-action="Index"><span>Trang chủ</span></a>
+                            </li>
+                            <li class="cafenabcrumb-item duxinbcrumb-end">
+                                <span>Giỏ hàng</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+<!-- cart area start -->
+<div class="cart-area pt-60 pb-60">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="cart-wrapper">
+                    <div class="table-content table-responsive">
+                        <div class="d-none d-sm-block" id="cartTable">
+                        </div>
+                        <!--view mobie-->
+                        <div class="d-sm-none" id="cartTableMobie">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xl-6 col-lg-6">
+                <div class="mt-30 d-grid" style="justify-items:center">
+                    <p class="title-cart text-center">Thông tin giao hàng</p>
+                    <div style="width: 100%">
+                        <label class="form-label">Tỉnh / Thành phố</label>
+                        <select class="form-control" id="province">
+                            <option value="">Chọn tỉnh thành</option>
+                        </select>
+                        <input type="text" name="province" class="d-none" value="@ViewBag.Province" />
+                    </div>
+                    <div style="width: 100%">
+                        <label class="form-label">Quận / Huyện</label>
+                        <select class="form-control" id="district">
+                            <option value="">Chọn quận/huyện</option>
+                        </select>
+                        <input type="text" name="district" class="d-none" value="@ViewBag.District" />
+                    </div>
+                    <div style="width: 100%">
+                        <label class="form-label">Phường / Xã</label>
+                        <select class="form-control" id="town">
+                            <option value="">Chọn phường/xã</option>
+                        </select>
+                        <input type="text" name="town" class="d-none" value="@ViewBag.Town" />
+                    </div>
+                    <div style="width: 100%">
+                        <label class="form-label">Địa chỉ/ Số nhà</label>
+                        <input class="form-control" id="Address" placeholder="Nhập địa chỉ/ số nhà" value="@ViewBag.Address" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-6 col-lg-6 justify-content-end">
+                <div class="cart-total mt-30">
+                    <p class="title-cart text-center">Thành tiền</p>
+                    <div class="ct-sub ct-sub__total">
+                        <span>Thành tiền</span>
+                        <span id="txtTotal">0 đ</span>
+                    </div>
+                    <div class="d-grid" style="padding-left: 30px; min-width:300px; width: 70%">
+                        <p class="title-cart text-center">Hình thức thanh toán</p>
+                        <div class="d-flex border-bottom">
+                            <input type="radio" name="Pay" id="Cod" style="margin-right: 20px" value="" checked />
+                            <label for="Cod">Thanh toán Cod</label>
+                        </div>
+                        <div class="d-flex border-bottom">
+                            <input type="radio" name="Pay" id="VnPay" style="margin-right: 20px" value="" />
+                            <label for="VnPay">Thanh toán VnPay</label>
+                        </div>
+                        <br />
+                        @{
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                if (ViewBag.Cart == "True")
+                                {
+                                    <div id="PayCart">
+                                        <a href="javascript:void(0)" onclick="VnPay()" class="site-btn">Tiền hành thanh toán</a>
+                                        <form id="vnPayForm" asp-controller="VnPay" asp-action="Index" method="post">
+                                            <input type="hidden" name="Province" id="provinceInput">
+                                            <input type="hidden" name="District" id="districtInput">
+                                            <input type="hidden" name="Town" id="townInput">
+                                            <input type="hidden" name="Address" id="addressInput">
+                                        </form>
+                                        <form id="vnPayFormCod" asp-controller="VnPay" asp-action="PayCod" method="post">
+                                            <input type="hidden" name="Province" id="provinceInputCod">
+                                            <input type="hidden" name="District" id="districtInputCod">
+                                            <input type="hidden" name="Town" id="townInputCod">
+                                            <input type="hidden" name="Address" id="addressInputCod">
+                                        </form>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div>
+                                    <center style="color:orangered">Vui lòng đăng nhập để mua hàng</center>
+                                    <a asp-controller="Login" asp-action="Index" class="site-btn">Đăng nhập</a>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- cart area end -->
+@section Scripts {
+    <script>
+        function formatCurrency(value) {
+            return parseInt(value).toLocaleString('vi-VN') + " đ";
+        }
+
+        function updateCartTable(data) {
+            var cartTableHTML = '<table class="table"><thead><tr><th class="product-thumbnail">Hình ảnh</th><th class="cart-product-name">Tên</th><th class="product-price">Đơn giá</th><th class="product-quantity">Số lượng</th><th class="product-subtotal">Tổng</th></tr></thead><tbody>';
+            var cartTableHTMLmobie = '<table class="table" style="width: 100%;"><thead><tr><th class="product-thumbnail ">Sản phẩm</th></tr></thead><tbody>';
+
+            if (data.cartModels && data.cartModels.length > 0) {
+                data.cartModels.forEach(function (item) {
+                    cartTableHTML += '<tr>';
+                    cartTableHTML += '<td class="product-thumbnail"><a href="#" class="img"><img src="' + item.productModel.url + '" alt=""></a>';
+                    cartTableHTML += '<a href="javascript:void(0)" class="product-remove" onclick="updateQuantity(' + item.productModel.productId + ',' + 1 + ')"><i class="fal fa-plus"></i></a>';
+                    cartTableHTML += '<a href="javascript:void(0)" class="product-remove" onclick="updateQuantity(' + item.productModel.productId + ',' + 0 + ')" ><i class="fal fa-minus"></i></a>';
+                    cartTableHTML += '<a href="javascript:void(0)" class="product-remove" onclick="removeFromCart(' + item.productModel.productId + ')"><i class="fal fa-times"></i></a></td>';
+                    cartTableHTML += '<td class="product-name"><a href="#">' + item.productModel.name + '</a></td>';
+                    cartTableHTML += '<td class="product-price"><span class="amount">' + formatCurrency(item.productModel.price) + '</span></td>';
+                    cartTableHTML += '<td class="product-quantity"><input type="number" value="' + item.quantity + '" min="1"></td>';
+                    cartTableHTML += '<td class="product-subtotal"><span class="amount">' + formatCurrency(item.productModel.price * item.quantity) + '</span></td>';
+                    cartTableHTML += '</tr>';
+
+                    cartTableHTMLmobie += '<tr class="d-sm-none">';
+                    cartTableHTMLmobie += '<td class="product-thumbnail">';
+                    cartTableHTMLmobie += '<a href="#" class="img"><img src="' + item.productModel.url + '" alt=""></a>';
+                    cartTableHTMLmobie += '<div>';
+                    cartTableHTMLmobie += '<div class="product-remove"><span class="amount amount_mobie">' + item.productModel.name + '</span></div>';
+                    cartTableHTMLmobie += '<a href="javascript:void(0)" class="product-remove" onclick="updateQuantity(' + item.productModel.productId + ', 1)"><i class="fal fa-plus"></i></a>';
+                    cartTableHTMLmobie += '<span class="product-remove" style="color: #000;">' + item.quantity + '</span>';
+                    cartTableHTMLmobie += '<a href="javascript:void(0)" class="product-remove" onclick="updateQuantity(' + item.productModel.productId + ', 0)"><i class="fal fa-minus"></i></a>';
+                    cartTableHTMLmobie += '<a href="javascript:void(0)" class="product-remove" onclick="removeFromCart(' + item.productModel.productId + ')"><i class="fal fa-times"></i></a>';
+                    cartTableHTMLmobie += '<div class="product-remove"><span class="amount amount_mobie d-flex justify-content-between"><span>Đơn giá</span><span>' + formatCurrency(item.productModel.price) + '</span></span></div>';
+                    cartTableHTMLmobie += '<div class="product-remove"><span class="amount amount_mobie d-flex justify-content-between"><span>Tổng</span><span>' + formatCurrency(item.productModel.price * item.quantity) + '</span></span></div>';
+                    cartTableHTMLmobie += '</div>';
+                    cartTableHTMLmobie += '</td>';
+                    cartTableHTMLmobie += '</tr>';
+
+                });
+            } else {
+                cartTableHTML += '<tr><td colspan="5">Giỏ của bạn đang trống!</td></tr>';
+                cartTableHTMLmobie += '<tr><td colspan="5">Giỏ của bạn đang trống!</td></tr>';
+                $('#PayCart').hide();
+            }
+
+            cartTableHTML += '</tbody></table>';
+            $('#cartTable').html(cartTableHTML);
+            $('#cartTableMobie').html(cartTableHTMLmobie);
+            $('#txtTotal').html(parseInt(data.totalPrice).toLocaleString('vi-VN') + " đ");
+        }
+
+        // Hàm cập nhật số lượng
+        function updateQuantity(productId, string) {
+            let quantity = -1;
+            if (string == 1) {
+                quantity = 1;
+            }
+            $.ajax({
+                url: '/Cart/UpdateQuantity',
+                type: 'POST',
+                data: { productId: productId, quantity: quantity },
+                success: function (response) {
+                    if (response.success) {
+                        getCart(); // Gọi lại hàm GetCart để cập nhật giỏ hàng
+                    }
+                    else {
+                        showAlertModal('danger', response.message);
+                    }
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    console.error('Error: ' + errorThrown);
+                }
+            });
+        }
+
+        // Hàm xóa khỏi giỏ hàng
+        function removeFromCart(productId) {
+            $.ajax({
+                url: '/Cart/RemoveFromCart',
+                type: 'POST',
+                data: { productId: productId },
+                success: function (response) {
+                    console.log("Product removed from cart successfully");
+                    getCart(); // Gọi lại hàm GetCart để cập nhật giỏ hàng
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    console.error('Error: ' + errorThrown);
+                }
+            });
+        }
+
+        // Hàm cập nhật thông tin giỏ hàng
+        function getCart() {
+            $.ajax({
+                url: '/Cart/GetCart',
+                type: 'GET',
+                success: function (data) {
+                    updateCartTable(data); // Cập nhật bảng giỏ hàng
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    console.error('Error: ' + errorThrown);
+                }
+            });
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+            getCart(); // Gọi hàm getCart() khi trang web được tải lần đầu tiên
+        });
+    </script>
+    <script src="~/assets/js/data.json"></script>
+    <script>
+        $(document).ready(function () {
+            // Lấy các phần tử input
+            var provinceInput = document.querySelector('input[name="province"]');
+            var districtInput = document.querySelector('input[name="district"]');
+            var townInput = document.querySelector('input[name="town"]');
+
+            // Lấy các phần tử select
+            var provinceSelect = document.getElementById('province');
+            var districtSelect = document.getElementById('district');
+            var townSelect = document.getElementById('town');
+
+            _prodvince = JSON.parse(data);
+            _prodvince.forEach(element => {
+                $('#province').append(`<option value="${element.code}">${element.name}</option>`);
+                if (element.code == provinceInput.value) {
+                    //console.log(element.districts)
+                    element.districts.forEach(_districts => {
+                        $('#district').append(`<option value="${_districts.code}">${_districts.name}</option>`)
+                        if (_districts.code == districtInput.value) {
+                            _districts.wards.forEach(_wards => {
+                                $('#town').append(`<option value="${_wards.code}">${_wards.name}</option>`)
+                            })
+                        }
+                    })
+                }
+            });
+
+            // Cập nhật các giá trị ban đầu từ input
+            // console.log("-1", provinceInput.value)
+            provinceSelect.value = provinceInput.value;
+            districtSelect.value = districtInput.value;
+            townSelect.value = townInput.value;
+        });
+        $(function () {
+            apiProvince = (prodvince) => {
+                let district;
+                $('#province').change(function () {
+                    $('#district').html('<option value="">Chọn quận/huyện</option>')
+                    $('#town').html('<option value = ""> Chọn phường/xã </option>')
+                    let value = $(this).val();
+                    $.each(prodvince, function (index, element) {
+                        if (element.code == value) {
+                            district = element.districts;
+                            $.each(element.districts, function (index, element1) {
+                                $('#district').append(`<option value="${element1.code}">${element1.name}</option>`)
+                            })
+
+                        }
+                    })
+                });
+                $('#district').change(function () {
+
+                    $('#town').html('<option value = ""> Chọn phường/xã </option>')
+                    let value = $(this).val();
+                    let provinceSelectvalue = document.getElementById('province').value - 1;
+                    if (!district) {
+                        district = prodvince[provinceSelectvalue].districts;
+                    }
+                    $.each(district, function (index, element) {
+                        if (element.code == value) {
+                            element.wards.forEach(element1 => {
+                                $('#town').append(`<option value="${element1.code}">${element1.name}</option>`)
+                            });
+                        }
+                    })
+                });
+            }
+            prodvince = JSON.parse(data);
+            apiProvince(prodvince);
+        })
+    </script>
+    <script>
+        function VnPay() {
+            var province = $('#province').val().trim();
+            var district = $('#district').val().trim();
+            var town = $('#town').val().trim();
+            var address = $('#Address').val().trim();
+            console.log(province, district, town, address);
+
+            // Kiểm tra xem người dùng đã chọn phương thức thanh toán VnPay hay không
+            var isVnPaySelected = $('#VnPay').is(':checked');
+            var isCodSelected = $('#Cod').is(':checked');
+            console.log(isVnPaySelected, isCodSelected);
+            if (province === '' || district === '' || town === '' || address === '') {
+                showAlertModal('danger', "Vui lòng điền đầy đủ thông tin")
+                return;
+            }
+            if (isVnPaySelected) {
+                $('#provinceInput').val(province);
+                $('#districtInput').val(district);
+                $('#townInput').val(town);
+                $('#addressInput').val(address);
+                $('#vnPayForm').submit(); // Gửi form khi thông tin hợp lệ và chọn thanh toán VnPay
+            }
+            if (isCodSelected) {
+                $('#provinceInputCod').val(province);
+                $('#districtInputCod').val(district);
+                $('#townInputCod').val(town);
+                $('#addressInputCod').val(address);
+                $('#vnPayFormCod').submit(); // Gửi form khi thông tin hợp lệ và chọn thanh toán VnPay
+            }
+        }
+    </script>
+}

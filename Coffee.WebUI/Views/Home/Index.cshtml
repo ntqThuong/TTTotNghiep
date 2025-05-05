@@ -1,0 +1,405 @@
+﻿@{
+    ViewData["Title"] = "Trang chủ";
+}
+
+@using Coffee.DATA.Models
+
+<main>
+    <!-- hero area start -->
+    <section class="hero__area hero__area--2 position-relative custom-padding">
+        <span class="shape shape__1 position-absolute"><img src="assets/images/shape/hero-shape-2-1.png" alt=""></span>
+        <span class="shape shape__2 position-absolute"><img src="assets/images/shape/hero-shape-2-2.png" alt=""></span>
+        <div class="container-fluid custom-width">
+            <div class="row mm-reverse">
+                <div class="col-xl-6 col-lg-7 align-self-center">
+                    <div class="hero__content hero__content--2 position-relative">
+                        <h1 class="title mb-10">
+                            Hương vị <br>
+                            coffee Riêng biệt
+                        </h1>
+                        <p>Mỗi loại cà phê đều có hương vị riêng biệt, khi phối trộn chúng với nhau theo tỉ lệ nhất định lại cho ra một hương vị hoàn toàn mới.</p>
+                        <div class="btns mt-45 d-flex align-items-center justify-content-start">
+                            <a href="contact.html" class="site-btn">Đọc thêm</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-5">
+                    <div class="hero__thumb hero__thumb--2 position-relative">
+                        <img src="assets/images/hero/hero-img-2-1.png" alt="img">
+                        @* <a href="http://www.youtube.com/embed/4xe72U7mXNg?rel=0&amp;controls=0&amp;showinfo=0" data-rel="lightcase:myCollection" data-animation="fadeInLeft" class="video-btn video-btn__2 d-flex align-items-center"><i class="fas fa-play"></i><span class="border-effect">play video</span></a> *@
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- hero area end -->
+    <!-- feature slider start -->
+    <div class="feature__area feature__area--2 pb-115">
+        <div class="container-fluid custom-width">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="feature__wrapper">
+                        <div class="row mt-none-50">
+                            <div class="col-xl-3 col-lg-6 col-md-6 mt-50">
+                                <div class="feature__item feature__item--2">
+                                    <span class="year">1992</span>
+                                    <div class="content mt-20">
+                                        <h2 class="title mb-10">Chúng tôi đã bắt đầu như thế nào</h2>
+                                        <p>Hành trình của chúng tôi bắt đầu từ niềm đam mê chung và ước mơ mang đến những hương vị cà phê đặc biệt.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-lg-6 col-md-6 mt-50">
+                                <div class="feature__item feature__item--2">
+                                    <span class="year">2002</span>
+                                    <div class="content mt-20">
+                                        <h2 class="title">Hạt cà phê</h2>
+                                        <p>Chúng tôi lựa chọn cẩn thận những hạt cà phê tốt nhất, đảm bảo mỗi tách đều thể hiện hương vị giàu và chất lượng không thể sánh kịp.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-lg-6 col-md-6 mt-50">
+                                <div class="feature__item feature__item--2">
+                                    <span class="year">2014</span>
+                                    <div class="content mt-20">
+                                        <h2 class="title">Công việc gia đình</h2>
+                                        <p>Dẫn dắt bởi sự tận tụy của gia đình, mỗi bước trong quá trình làm việc của chúng tôi đều phản ánh sự cam kết với sự xuất sắc và truyền thống.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-lg-6 col-md-6 mt-50">
+                                <div class="feature__item feature__item--2">
+                                    <span class="year">2019</span>
+                                    <div class="content mt-20">
+                                        <h2 class="title">Các loại cà phê từ Bangladesh</h2>
+                                        <p>Khám phá các loại cà phê của Bangladesh, chúng tôi cố gắng thể hiện đặc điểm địa lý độc đáo và hương vị đa dạng của vùng miền chúng tôi.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- feature slider end -->
+    <!-- about area start -->
+    <section class="about__area about__area--2 grey-bg position-relative pt-120 pb-130">
+        <span class="shape shape__1 position-absolute"><img src="assets/images/shape/about-shape-2-1.png" alt=""></span>
+        <span class="shape shape__2 position-absolute"><img src="assets/images/shape/about-shape-2-2.png" alt=""></span>
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-5 col-lg-7">
+                    <div class="about__left about__left--2 position-relative">
+                        <img class="big" src="assets/images/about/about-img-2-1.png" alt="img">
+                        <img class="small position-absolute" src="assets/images/about/about-img-2-2.png" alt="img">
+                    </div>
+                </div>
+                <div class="col-xl-6 offset-xl-1">
+                    <div class="about__right about__right--2 pl-45 pt-45">
+                        <div class="section-heading section-heading__black">
+                            <span class="sub-title">về chúng tôi</span>
+                            <h2 class="title mb-25">
+                                Một trong những quán cà phê tốt nhất ở quê nhà của bạn
+                            </h2>
+                            <p>Cà phê rang đậm (dark roast) có hương vị mạnh mẽ và đậm đà, thường được dùng để pha chế espresso hoặc các loại cà phê có thêm sữa.</p>
+                            <p>Cà phê rang vừa (medium roast) có vị cân bằng giữa vị đắng và vị chua, phù hợp cho cả pha cà phê đen và cà phê sữa. Đây là loại rang phổ biến nhất hiện nay.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- about area end -->
+    <!-- populer menu area start -->
+    <section class="popular-menu__area grey-bg position-relative pb-120">
+        <span class="shape shape__1 position-absolute"><img src="assets/images/shape/menu-shape-1.png" alt="" /></span>
+        <span class="shape shape__2 position-absolute"><img src="assets/images/shape/menu-shape-2.png" alt="" /></span>
+        <span class="shape shape__3 position-absolute"><img src="assets/images/shape/menu-shape-3.png" alt="" /></span>
+        <span class="shape shape__4 position-absolute"><img src="assets/images/shape/menu-shape-4.png" alt="" /></span>
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12 text-center">
+                    <div class="section-heading section-heading__black mb-40">
+                        <h2 class="title">Thực đơn giảm giá</h2>
+                    </div>
+                </div>
+            </div>
+            <div id="popular-menu-grid" class="row popular-menu__grid mt-none-30">
+                <div class="col-xl-4 col-lg-6 col-md-6 grid-sizer"></div>
+                @{
+                    foreach (var item in ViewBag.ProductDiscount as List<Product>)
+                    {
+                        <div class="col-xl-4 col-lg-6 col-md-6 grid-item mt-30">
+                            <div class="popular-menu__item">
+                                <div class="popular-menu__thumb">
+                                    <img src="@item.Image" alt="@item.Name">
+                                </div>
+                                <div class="popular-menu__content text-center">
+                                    <h2 class="title">
+                                        <a style="display: inline-block;width: 85%;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" href="/san-pham/@item.Url-@item.Id">@item.Name</a>
+                                    </h2>
+                                    <div class="pp__price d-flex align-items-center justify-content-center">
+                                        <h6 class="label">Giá - </h6>
+                                        <span class="price"> @Convert.ToInt32(item.DiscountPrice).ToString("C0", new System.Globalization.CultureInfo("vi-VN")).Replace(",", ".") / <span class="regular"><del>@Convert.ToInt32(item.Price).ToString("C0", new System.Globalization.CultureInfo("vi-VN")).Replace(",", ".") </del></span></span>
+                                    </div>
+                                    <div class="pp__action pp__action--2 mt-15 d-flex align-items-center justify-content-center">
+                                        @if (Convert.ToInt32(item.Quantity) > 0)
+                                        {
+                                            <div class="cart d-flex align-items-center justify-content-center">
+                                                <a href="javascript:void(0)" onclick="addCart('@item.Id',1)"><i class="fal fa-shopping-basket"></i></a>
+                                            </div>
+                                        }
+                                        <div class="view d-flex align-items-center justify-content-center">
+                                            <a href="/san-pham/@item.Url-@item.Id"><i class="fal fa-eye"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </section>
+    <!-- populer menu area end -->
+    <!-- testimonail area start -->
+    <section class="testimonial__area pt-115 pb-110 position-relative bg_img" data-overlay="dark" data-opacity="5" data-background="/assets/images/bg/testimonial-bg-2.jpg">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12 text-center">
+                    <div class="section-heading mb-40">
+                        @* <span class="sub-title">BÌNH PHẨM</span> *@
+                        <h2 class="title">Đánh giá của khách hàng</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="row g-0">
+                <div class="col-xl-12">
+                    <div class="testimonial__active owl-carousel slider-nav">
+                        <div class="testimonial__item text-center">
+                            <div class="row g-0 justify-content-center">
+                                <div class="col-xl-8">
+                                    <span class="quote mb-20">
+                                        <img src="assets/images/icons/t-quote.png" alt="">
+                                    </span>
+                                    <p>Quán có không gian xanh mát, yên tĩnh, thích hợp cho những ai muốn tìm một nơi để học tập, làm việc hay đơn giản là thư giãn sau giờ học tập và làm việc căng thẳng. Cà phê ở đây ngon, nguyên chất, giá cả hợp lý. Nhân viên quán thân thiện, nhiệt tình.</p>
+                                    <div class="author-info mt-35">
+                                        <div class="thumb mb-25">
+                                            <img src="assets/images/author/tm-author.png" alt="">
+                                        </div>
+                                        <div class="content">
+                                            <h4 class="name">Anh Trịnh Xuân Vinh Quy</h4>
+                                            <span class="designation">Khách hàng thân thiết</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="testimonial__item text-center">
+                            <div class="row g-0 justify-content-center">
+                                <div class="col-xl-8">
+                                    <span class="quote mb-20">
+                                        <img src="assets/images/icons/t-quote.png" alt="">
+                                    </span>
+                                    <p>Quán có không gian rộng rãi, thoáng mát, được thiết kế đẹp mắt. Menu đồ uống đa dạng, phong phú, nhiều lựa chọn. Phục vụ nhanh chóng, chuyên nghiệp.</p>
+                                    <div class="author-info mt-35">
+                                        <div class="thumb mb-25">
+                                            <img src="assets/images/author/tm-author.png" alt="">
+                                        </div>
+                                        <div class="content">
+                                            <h4 class="name">Chị Nguyễn Thuỳ Dung</h4>
+                                            <span class="designation">Khách hàng thân thiết</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- testimonail area end -->
+    <!-- top grade area start -->
+    <section class="topgrade__area topgrade__area--2 grey-bg pt-115 pb-115 position-relative">
+        <span class="shape shape__1 position-absolute"><img src="assets/images/shape/top-grade-shape-2-1.png" alt=""></span>
+        <span class="shape shape__2 position-absolute"><img src="assets/images/shape/top-grade-shape-2-2.png" alt=""></span>
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12 text-center">
+                    <div class="section-heading section-heading__black mb-55">
+                        <span class="sub-title">Chất lượng tốt nhất</span>
+                        <h2 class="title">Chất lượng hàng đầu Việt Nam</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-none-30">
+                <div class="col-xl-3 col-lg-6 col-md-6 mt-30">
+                    <div class="topgrade__item topgrade__item--2 text-center">
+                        <div class="thumb">
+                            <img src="assets/images/top-grade/tg-2-1.jpg" alt="">
+                            <span class="count">01</span>
+                        </div>
+                        <div class="content mt-20">
+                            <h2 class="title">Hạt Americano</h2>
+                            <p>Hạt cà phê Arabica chất lượng cao, rang vừa, cho hương vị cân bằng, chua thanh nhẹ.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-md-6 mt-85">
+                    <div class="topgrade__item topgrade__item--2 text-center">
+                        <div class="thumb">
+                            <img src="assets/images/top-grade/tg-2-2.jpg" alt="">
+                            <span class="count">02</span>
+                        </div>
+                        <div class="content mt-20">
+                            <h2 class="title">Hạt arebica</h2>
+                            <p>Hạt cà phê Arabica xanh chưa rang, giữ nguyên hương vị tự nhiên, phù hợp cho những ai yêu thích tự rang xay cà phê.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-md-6 mt-30">
+                    <div class="topgrade__item topgrade__item--2 text-center">
+                        <div class="thumb">
+                            <img src="assets/images/top-grade/tg-2-3.jpg" alt="">
+                            <span class="count">03</span>
+                        </div>
+                        <div class="content mt-20">
+                            <h2 class="title">Hạt hỗn hợp</h2>
+                            <p>Hạt cà phê rang xay hỗn hợp Arabica và Robusta, cho hương vị đậm đà, mạnh mẽ, phù hợp cho những ai thích cà phê mạnh.</p>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-md-6 mt-85">
+                    <div class="topgrade__item topgrade__item--2 text-center">
+                        <div class="thumb">
+                            <img src="assets/images/top-grade/tg-2-4.jpg" alt="">
+                            <span class="count">04</span>
+                        </div>
+                        <div class="content mt-20">
+                            <h2 class="title">Hạt Robasta</h2>
+                            <p>Hạt cà phê Robusta rang xay, cho hương vị đậm đà, hơi đắng, hàm lượng caffeine cao, phù hợp cho những ai thích cà phê mạnh.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- top grade area end -->
+    <!-- blog area start -->
+    <div class="blog__area blog__area--2 position-relative pt-115 pb-120">
+        <span class="shape shape__1">
+            <img src="assets/images/shape/blog-shape-2-1.png" alt="">
+        </span>
+        <span class="shape shape__2">
+            <img src="assets/images/shape/blog-shape-2-2.png" alt="">
+        </span>
+        <div class="container">
+            <div class="row align-items-end mb-60">
+                <div class="col-lg-8">
+                    <div class="section-heading section-heading__black">
+                        <span class="sub-title">Tin tức</span>
+                        <h2 class="title">Tin tức mới nhất</h2>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="btns-wrapper text-center text-lg-end">
+                        <a href="about.html" class="site-btn">Tìm hiêu</a>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-none-30">
+                <div class="col-xl-4 col-lg-6 col-md-6 mt-30">
+                    <article class="blog__item blog__item--2">
+                        <div class="thumb position-relative">
+                            <div class="img">
+                                <img src="assets/images/blog/blog-2-1.jpg" alt="">
+                            </div>
+                        </div>
+                        <div class="content content__2">
+                            <ul class="blog__meta blog__meta--2 list-unstyled d-flex align-items-center justify-content-start">
+                                <li><span>By: </span> Vinh Quy</li>
+                            </ul>
+                            <h3 class="blog__title blog__title--2 border-effect">
+                                <a href="blog-details.html">Những câu hỏi doanh nghiệp cần có khả năng trả lời</a>
+                            </h3>
+                            <div class="btn-wrapper mt-15 d-flex justify-content-between">
+                                <a href="blog-details.html" class="read-more read-more__2">Đọc thêm <i class="fa fa-long-arrow-right"></i></a>
+                                <a href="#0" class="share-btn"><i class="fal fa-share-alt"></i></a>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+                <div class="col-xl-4 col-lg-6 col-md-6 mt-30">
+                    <article class="blog__item blog__item--2">
+                        <div class="thumb position-relative">
+                            <div class="img">
+                                <img src="assets/images/blog/blog-2-2.jpg" alt="">
+                            </div>
+                        </div>
+                        <div class="content content__2">
+                            <ul class="blog__meta blog__meta--2 list-unstyled d-flex align-items-center justify-content-start">
+                                <li><span>By: </span> Vinh Quy</li>
+                            </ul>
+                            <h3 class="blog__title blog__title--2 border-effect">
+                                <a href="blog-details.html">Bắt đầu một buổi sáng tuyệt vời với cà phê Cafena</a>
+                            </h3>
+                            <div class="btn-wrapper mt-15 d-flex justify-content-between">
+                                <a href="blog-details.html" class="read-more read-more__2">Đọc thêm <i class="fa fa-long-arrow-right"></i></a>
+                                <a href="#0" class="share-btn"><i class="fal fa-share-alt"></i></a>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+                <div class="col-xl-4 col-lg-6 col-md-6 mt-30">
+                    <article class="blog__item blog__item--2">
+                        <div class="thumb position-relative">
+                            <div class="img">
+                                <img src="assets/images/blog/blog-2-3.jpg" alt="">
+                            </div>
+                        </div>
+                        <div class="content content__2">
+                            <ul class="blog__meta blog__meta--2 list-unstyled d-flex align-items-center justify-content-start">
+                                <li><span>By: </span> Vinh Quy</li>
+                            </ul>
+                            <h3 class="blog__title blog__title--2 border-effect">
+                                <a href="blog-details.html">Những ly cocktail tuyệt hảo từ các bartender của chúng tôi</a>
+                            </h3>
+                            <div class="btn-wrapper mt-15 d-flex justify-content-between">
+                                <a href="blog-details.html" class="read-more read-more__2">Đọc thêm <i class="fa fa-long-arrow-right"></i></a>
+                                <a href="#0" class="share-btn"><i class="fal fa-share-alt"></i></a>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- blog area end -->
+</main>
+@section Scripts {
+    <script>
+        function addCart(productId, quantity) {
+            console.log(quantity);
+            $.ajax({
+                url: '/Cart/AddToCart',
+                type: 'POST',
+                data: {
+                    product: { Id: productId },
+                    quantity: quantity
+                },
+                success: function (response) {
+                    if (response.success) {
+                        showAlertModal('success', 'Thêm vào giỏ hàng thành công!');
+                        updateCartCount();
+                    } else {
+                        showAlertModal('danger', response.message);
+                    }
+                }
+            });
+
+        }
+    </script>
+}

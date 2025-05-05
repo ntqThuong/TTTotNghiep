@@ -1,0 +1,354 @@
+﻿@using Coffee.DATA
+@inject DbCoffeeDbContext dbContext
+@using System.Security.Claims;
+@* Add file css *@
+@section Styles {
+}
+<div id="preloader">
+    <div id="ctn-preloader" class="ctn-preloader">
+        <div class="animation-preloader">
+            <div class="spinner"></div>
+            <div class="txt-loading">
+                <span data-text-preloader="C" class="letters-loading">
+                    C
+                </span>
+                <span data-text-preloader="A" class="letters-loading">
+                    A
+                </span>
+                <span data-text-preloader="F" class="letters-loading">
+                    F
+                </span>
+                <span data-text-preloader="E" class="letters-loading">
+                    E
+                </span>
+                <span data-text-preloader="N" class="letters-loading">
+                    N
+                </span>
+                <span data-text-preloader="A" class="letters-loading">
+                    A
+                </span>
+            </div>
+        </div>
+        <div class="loader">
+            <div class="row">
+                <div class="col-12 loader-section section-left">
+                    <div class="bg"></div>
+                </div>
+                @* <div class="col-3 loader-section section-left">
+                    <div class="bg"></div>
+                </div>
+                <div class="col-3 loader-section section-right">
+                    <div class="bg"></div>
+                </div>
+                <div class="col-3 loader-section section-right">
+                    <div class="bg"></div>
+                </div> *@
+            </div>
+        </div>
+    </div>
+</div>
+<!-- preloader end -->
+<!-- header start -->
+
+<header class="site-header">
+    <div class="header-top header-top__2">
+        <div class="container-fluid custom-width">
+            <div class="row">
+                <div class="col-xl-6 col-lg-12 align-self-center">
+                    <div class="header-top__left d-flex align-items-center">
+                        <ul class="header-top__infos list-unstyled d-flex align-items-center mb-0">
+                            <li><a href="tel:0946453657"><i class="fas fa-phone-square"></i> 0946453657</a></li>
+                            <li><a href="https://maps.app.goo.gl/tbNeHoq2WYpJ5ZnM6" target="_blank"><i class="fa fa-map-marker-alt"></i> 451 Tôn Đản, Đà Nẵng</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-12  align-self-end">
+                    <div class="header-top__right header-top__right--2 d-flex justify-content-xl-end justify-content-center align-items-center">
+                        <div class="social-links social-links__2 d-flex align-items-center justify-content-md-start justify-content-center">
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                if (User.FindFirst(ClaimTypes.Role)?.Value == "Admin")
+                                {
+                                    <a href="/Admin" target="_blank"><i class="far fa-users-cog"></i></a>
+                                }
+                                <a asp-controller="HistoryOrder" asp-action="Index" target="_blank"><i class="far fa-history"></i></a>
+                                <a asp-controller="Cart" asp-action="Index" target="_blank"><i class="fal fa-shopping-cart"></i></a>
+                                <a asp-controller="User" asp-action="Index" target="_blank"><i class="fal fa-user"></i></a>
+                                <a asp-controller="Login" asp-action="Logout" method="post"><i class="fal fa-sign-out"></i></a>
+                            }
+                        </div>
+                        @if (!User.Identity.IsAuthenticated)
+                        {
+                            <div class="pl-10 pr-10">
+                                <a asp-controller="Login" asp-action="Index" style="color: #6c6c6c;text-decoration: none;font-weight: 700;">Đăng nhập</a>
+                                <span class="pl-5 pr-5">/</span>
+                                <a asp-controller="Login" asp-action="Register" style="color: #6c6c6c;text-decoration: none;font-weight: 700;">Đăng kí</a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="menu-area menu-area__3 menu-area__4">
+        <div class="container-fluid custom-width custom-width__2">
+            <div class="row d-none d-xl-flex">
+                <div class="col-xl-5 col-lg-4 col-md-5 align-self-center ">
+                    <div class="main-menu main-menu__2">
+                        <nav>
+                            <ul class="justify-content-end">
+                                <li class="menu-item-has-children">
+                                    <a asp-controller="Home" asp-action="Index">Trang chủ</a>
+                                </li>
+                                <li><a asp-controller="Home" asp-action="Introduce">Giới thiệu</a></li>
+                                <li>
+                                    <a href="#0">Cửa Hàng</a>
+                                    <ul class="sub-menu">
+                                        <li><a asp-controller="Product" asp-action="Index">Cửa hàng</a></li>
+                                        <li><a asp-controller="Home" asp-action="Reservation">Đặt bàn</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+                <div class="col-xl-2 col-lg-2 d-none d-lg-block text-center align-self-center">
+                    <div class="logo">
+                        <a asp-controller="Home">
+                            <img src="~/assets/images/logo/logo-black.png" alt="img">
+                        </a>
+                    </div>
+                </div>
+                <div class="col-xl-5 col-lg-6 col-md-7 align-self-center">
+                    <div class="menu-area__right menu-area__right--3 menu-area__right--4 d-flex align-items-center">
+                        <div class="main-menu main-menu__2">
+                            <nav>
+                                <ul>
+                                    <li>
+                                        <a href="#0">Trang</a>
+                                        <ul class="sub-menu">
+                                            <li><a asp-controller="Pages" asp-action="Blog">Bài viết</a></li>
+                                            <li><a asp-controller="Pages" asp-action="Staff">Nhân viên</a></li>
+                                            <li><a asp-controller="Pages" asp-action="FAQ">Faq</a></li>
+                                            <li><a asp-controller="Pages" asp-action="Story">Câu chuyện</a></li>
+                                            <li><a asp-controller="Pages" asp-action="Gallery">Trưng bày</a></li>
+                                        </ul>
+                                    </li>
+                                    <li><a asp-controller="Home" asp-action="Contact">Liên hệ</a></li>
+                                </ul>
+                            </nav>
+                        </div>
+                        <div class="wrapper wrapper__2 pl-50 d-flex justify-content-end align-items-center">
+                            <div class="search">
+                                <div class="search__trigger item">
+                                    <span class="open"><i class="far fa-search"></i></span>
+                                    <span class="close"><i class="fal fa-times"></i></span>
+                                </div>
+                                <div class="search__form">
+                                    <form asp-controller="Product" asp-action="Index" method="get">
+                                        <input type="search" name="search" value="" placeholder="Search Keywords">
+                                        <button type="submit"><i class="far fa-search"></i></button>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="hamburger-trigger item">
+                                <i class="far fa-bars"></i>
+                            </div>
+                            <div class="cart cart-trigger item position-relative">
+                                <i class="fa fa-shopping-basket"></i>
+                                <span id="txtCart" class="cart__count">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row d-lg-flex d-xl-none">
+                <div class="col-xl-9 col-lg-10 col-6">
+                    <div class="wrapper-for-lg d-flex align-items-center">
+                        <div class="logo">
+                            <a href="index.html">
+                                <img src="~/assets/images/logo/logo-black.png" alt="img">
+                            </a>
+                        </div>
+                        <div class="main-menu main-menu__2">
+                            <nav id="mobile-menu">
+                                <ul>
+                                    <li class="menu-item-has-children">
+                                        <a asp-controller="Home" asp-action="Index">Trang chủ</a>
+                                    </li>
+                                    <li><a asp-controller="Home" asp-action="Introduce">Giới thiệu</a></li>
+                                    <li>
+                                        <a href="#0">Cửa Hàng</a>
+                                        <ul class="sub-menu">
+                                            <li><a asp-controller="Product" asp-action="Index">Cửa hàng</a></li>
+                                            <li><a asp-controller="Home" asp-action="Reservation">Đặt bàn</a></li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="#0">Trang</a>
+                                        <ul class="sub-menu">
+                                            <li><a asp-controller="Pages" asp-action="Blog">Bài viết</a></li>
+                                            <li><a asp-controller="Pages" asp-action="Staff">Nhân viên</a></li>
+                                            <li><a asp-controller="Pages" asp-action="FAQ">Faq</a></li>
+                                            <li><a asp-controller="Pages" asp-action="Story">Câu chuyện</a></li>
+                                            <li><a asp-controller="Pages" asp-action="Gallery">Trưng bày</a></li>
+                                        </ul>
+                                    </li>
+                                    <li><a asp-controller="Home" asp-action="Contact">Liên hệ</a></li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-2 col-6 align-self-center">
+                    <div class="menu-area__right menu-area__right--4  d-flex justify-content-end align-items-center">
+                        <div class="search">
+                            <div class="search__trigger item">
+                                <span class="open"><i class="far fa-search"></i></span>
+                                <span class="close"><i class="fal fa-times"></i></span>
+                            </div>
+                            <div class="search__form">
+                                <form asp-controller="Product" asp-action="Index" method="get">
+                                    <input type="search" name="search" value="" placeholder="Search Keywords">
+                                    <button type="submit"><i class="far fa-search"></i></button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="hamburger-trigger item">
+                            <i class="far fa-bars"></i>
+                        </div>
+                        <div class="cart cart-trigger item position-relative">
+                            <i class="fa fa-shopping-basket"></i>
+                            <span class="cart__count" id="txtCartRe">3</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<aside class="side-info-wrapper mm-only">
+    <nav>
+        <div class="nav" id="nav-tab" role="tablist">
+            <a class="nav-link active" id="menu-tab-1-tab" data-bs-toggle="tab"
+               href="#menu-tab-1" role="tab" aria-controls="menu-tab-1"
+               aria-selected="true">Dịch vụ</a>
+            <a class="nav-link" id="menu-tab-2-tab" data-bs-toggle="tab" href="#menu-tab-2"
+               role="tab" aria-controls="menu-tab-2" aria-selected="false">Thông tin</a>
+        </div>
+    </nav>
+    <div class="side-info__wrapper d-flex align-items-center justify-content-between">
+        <div class="side-info__logo">
+            <a href="index.html">
+                <img src="~/assets/images/logo/logo-black.png" alt="logo">
+            </a>
+        </div>
+        <div class="side-info__close">
+            <a href="javascript:void(0);"><i class="fal fa-times"></i></a>
+        </div>
+    </div>
+    <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active" id="menu-tab-1" role="tabpanel"
+             aria-labelledby="menu-tab-1-tab">
+            <div class="mobile-menu"></div>
+        </div>
+        <div class="tab-pane fade" id="menu-tab-2" role="tabpanel"
+             aria-labelledby="menu-tab-2-tab">
+            <div class="side-info">
+                <div class="side-info__content mb-35">
+                    <h4 class="title mb-5">Về chúng tôi</h4>
+                    <p>Điều quan trọng là phải tự chăm sóc nỗi đau, sau đó là sự trưởng thành của bệnh nhân, nhưng đồng thời cũng sẽ có rất nhiều công việc và nỗi đau. Trên thực tế, để tìm hiểu cặn kẽ vấn đề, không ai có thể giúp chúng ta trừ khi chúng ta thu được lợi ích nào đó từ nó.</p>
+                    <a class="site-btn mt-20" href="contact.html">Liên hệ ngay</a>
+                </div>
+                <div class="contact__info--wrapper mt-15">
+                    <h4 class="title mb-10">Liên hệ ngay</h4>
+                    <ul class="contact__info list-unstyled">
+                        <li>
+                            <span><i class="fas fa-map-marker-alt"></i></span>
+                            <p>451 Tôn Đản, Đà Nẵng</p>
+                        </li>
+                        <li>
+                            <span><i class="fas fa-phone"></i></span>
+                            <p>+84946453657</p>
+                        </li>
+                        <li>
+                            <span><i class="fas fa-envelope-open-text"></i></span>
+                            <p>vinhquytrinh@gmail.com</p>
+                        </li>
+                    </ul>
+                </div>
+                <div class="social-links mt-20 d-flex justify-content-start align-items-center">
+                    <a href="#0"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#0"><i class="fab fa-twitter"></i></a>
+                    <a href="#0"><i class="fab fa-google-plus-g"></i></a>
+                    <a href="#0"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</aside>
+
+<!-- side info for desktop view -->
+<aside class="side-info-wrapper show-all">
+    <div class="side-info__wrapper d-flex align-items-center justify-content-between">
+        <div class="side-info__logo">
+            <a href="index.html">
+                <img src="~/assets/images/logo/logo-black.png" alt="logo">
+            </a>
+        </div>
+        <div class="side-info__close">
+            <a href="javascript:void(0);"><i class="fal fa-times"></i></a>
+        </div>
+    </div>
+    <div class="side-info">
+        <div class="side-info__content mb-35">
+            <h4 class="title mb-5">Về chúng tôi</h4>
+            <p>Điều quan trọng là phải tự chăm sóc nỗi đau, sau đó là sự trưởng thành của bệnh nhân, nhưng đồng thời cũng sẽ có rất nhiều công việc và nỗi đau. Trên thực tế, để tìm hiểu cặn kẽ vấn đề, không ai có thể giúp chúng ta trừ khi chúng ta thu được lợi ích nào đó từ nó.</p>
+            <a class="site-btn mt-20" href="contact.html">Liên hệ ngay</a>
+        </div>
+        <div class="contact__info--wrapper mt-15">
+            <h4 class="title mb-10">Liên hệ ngay</h4>
+            <ul class="contact__info list-unstyled">
+                <li>
+                    <span><i class="fas fa-map-marker-alt"></i></span>
+                    <p>451 Tôn Đản, Đà Nẵng</p>
+                </li>
+                <li>
+                    <span><i class="fas fa-phone"></i></span>
+                    <p>+84946453657</p>
+                </li>
+                <li>
+                    <span><i class="fas fa-envelope-open-text"></i></span>
+                    <p>vinhquytrinh@gmail.com</p>
+                </li>
+            </ul>
+        </div>
+        <div class="social-links mt-20 d-flex justify-content-start align-items-center">
+            <a href="#0"><i class="fab fa-facebook-f"></i></a>
+            <a href="#0"><i class="fab fa-twitter"></i></a>
+            <a href="#0"><i class="fab fa-google-plus-g"></i></a>
+            <a href="#0"><i class="fab fa-instagram"></i></a>
+        </div>
+    </div>
+</aside>
+<!-- header end -->
+
+<aside class="cart-bar-wrapper">
+    <div class="cart-bar__close">
+        <a class="d-flex align-items-center justify-content-center" href="javascript:void(0);"><i class="fal fa-times"></i></a>
+    </div>
+    <div class="cart-bar">
+        <h4 class="cart-bar__title">Giỏ hàng (<span id="txtCartPopup">0</span>)</h4>
+        <div class="cart-bar__lists" id="listCart">
+        </div>
+        <div class="cart-bar__subtotal d-flex align-items-center justify-content-between">
+            <span>Thành tiền:</span>
+            <span>$87.00</span>
+        </div>
+
+        <div class="btns d-flex align-items-center justify-content-center">
+            <a asp-controller="Cart" asp-action="Index" class="site-btn">Tới giỏ hàng</a>
+        </div>
+
+    </div>
+</aside>

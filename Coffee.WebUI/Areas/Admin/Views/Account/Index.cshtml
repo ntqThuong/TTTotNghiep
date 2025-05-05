@@ -1,0 +1,106 @@
+﻿@{
+    ViewData["Title"] = "Tài khoản khách hàng";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex align-items-center">
+        <p href="javascript:void(0)" class="m-0 font-weight-bold text-primary">Tài khoảng khách hàng</p>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table id="dataTable" class="table table-bordered" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Tên</th>
+                        <th>Email</th>
+                        <th>Số điện thoại</th>
+                        <th>#</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#dataTable').DataTable({
+                "lengthMenu": [5, 10, 25, 50],
+                "language": {
+                    processing: "Message khi đang tải dữ liệu",
+                    search: "Tìm kiếm",
+                    lengthMenu: "Điều chỉnh số mục trên 1 trang _MENU_ ",
+                    info: "Hiển thị _START_ đến _END_ trong  _TOTAL_ mục",
+                    infoEmpty: "Không có dữ liệu, Hiển thị 0 bản ghi trong _MAX_ tổng cộng 0 ",
+                    infoFiltered: "(Không có sản phẩm trong _MAX_ bản ghi)",
+                    loadingRecords: "",
+                    zeroRecords: "Không có dữ liệu theo tìm kiếm",
+                    emptyTable: "Không có dữ liệu",
+                    paginate: {
+                        first: "<<",
+                        previous: "<",
+                        next: ">",
+                        last: ">>"
+                    },
+                    aria: {
+                        sortAscending: ": Message khi đang sắp xếp theo column",
+                        sortDescending: ": Message khi đang sắp xếp theo column",
+                    }
+                },
+            });
+        });
+        // Hàm tải lại dữ liệu AJAX
+        function loadData() {
+            $.ajax({
+                type: 'get',
+                url: '/Admin/Account/GetAllAccount',
+                success: function (response) {
+                    if (response.success) {
+                        // Xóa dữ liệu cũ trong bảng
+                        $('#dataTable').DataTable().clear().draw();
+
+                        //Thêm dữ liệu mới vào bảng
+                        response.result.forEach(function (item) {
+                            var Status = item.status ? "Khoá" : "Mở khoá"
+                            var Phone = item.status ? "Khoá" : "Mở khoá"
+                            // Thêm dữ liệu vào bảng
+                            $('#dataTable').DataTable().row.add([
+                                item.name,
+                                item.email,
+                                item.phone ?? 'Không',
+                                '<a href="javascript:void(0)" class="m-0 font-weight-bold text-primary" onclick=toggleAccount(' + item.id + ')>' + Status + '</a>'
+                            ]).draw(false);
+                        });
+                    } else {
+                        console.error(response.error);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        }
+        $(document).ready(function () {
+            // Gọi hàm tải lại dữ liệu khi trang được tải
+            loadData();
+        });
+        function toggleAccount(Id) {
+            $.ajax({
+                type: 'post',
+                url: '/Admin/Account/Toggle?Id=' + Id,
+                success: function (response) {
+                    if (response.success) {
+                        showAlertModal('success', response.message);
+                        loadData();
+                    } else {
+                        showAlertModal('danger', 'Có lỗi xảy ra khi gửi yêu cầu!');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        }
+    </script>
+}
