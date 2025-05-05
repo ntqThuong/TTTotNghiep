@@ -30,4 +30,4 @@ To know more about how to setup your enviroment visit the [Microsoft .NET Downlo
 - Repository, Unit of work
   
 ## About:
-The eProject.Onion Project was developed by [Trịnh Xuân Vinh Quy](https://www.facebook.com/Vhquy).
+The eProject.Onion Project was developed by [Nguyễn Thị Quỳnh Thương](https://www.facebook.com/ntqthuong/).
