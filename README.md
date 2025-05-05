@@ -10,8 +10,6 @@ The goal of this project is implement the most common used technologies and shar
 
 To know more about how to setup your enviroment visit the [Microsoft .NET Download Guide](https://www.microsoft.com/net/download)
 
-## Demo: [https://coffeeshopon.somee.com](https://coffeeshopon.somee.com)
-
 ## Account Admin: 
 - user: Admin
 - pass: Admin@123
